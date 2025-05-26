@@ -1,0 +1,117 @@
+﻿@model List<Juegomesa>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Catálogo de Juegos de Mesa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        background: #f8f9fa;
+        font-family: 'Segoe UI', sans-serif;
+        }
+
+        .card {
+            border: none;
+            border-radius: 16px;
+            transition: transform 0.3s ease;
+            height: 420px; /* altura fija para que todas sean iguales */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-img-top {
+            height: 200px; /* altura fija para la imagen */
+            width: 100%;
+            object-fit: cover; /* recorta y mantiene proporción sin deformar */
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+
+        .card-body {
+            flex-grow: 1; /* para que el cuerpo llene el espacio restante */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary {
+            border-radius: 50px;
+            font-weight: bold;
+        }
+
+        .modal-content {
+            border-radius: 16px;
+        }
+
+        .modal-header {
+            color: black;
+            border-bottom: none;
+            border-top-left-radius: 16px;
+            border-top-right-radius: 16px;
+        }
+
+        .modal-body {
+            background-color: #fdfdfe;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <h1 class="text-center mb-5 text-primary">🎲 Inventario de Juegos de Mesa</h1>
+
+        <div class="row justify-content-center">
+            @foreach (var juego in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center">
+                        <img src="@(juego.URL ?? "https://via.placeholder.com/300x200?text=Juego+de+Mesa")" class="card-img-top" alt="@juego.Nombre" />
+                        <div class="card-body d-flex flex-column">
+                            <h4 class="card-title text-dark">@juego.Nombre</h4>
+                            <p class="text-muted">@juego.Marca</p>
+                            <p><strong>Código:</strong> @juego.CodigoInterno</p>
+
+                            <!-- Existencia total -->
+                            <p>
+                                <strong>Existencia total:</strong>
+                                @{
+                                    int existenciaTotal = 0;
+                                    foreach (var existencia in juego.CodigoInternoNavigation.Existencia)
+                                    {
+                                        existenciaTotal += existencia.Existencia; // Sumar las existencias
+                                    }
+                                }
+                                @existenciaTotal
+                            </p>
+
+                            <!-- Existencias por sucursal -->
+                            <div class="text-start" style="max-height: 120px; overflow-y: auto;">
+                                <strong>Existencia por sucursal:</strong>
+                                <ul class="list-unstyled small">
+                                    @foreach (var existencia in juego.CodigoInternoNavigation.Existencia)
+                                    {
+                                        <li>@existencia.CodigosucursalNavigation.Nombresucursal: @existencia.Existencia unidades</li>
+                                    }
+                                </ul>
+                            </div>
+
+                            <!-- Opcional: botón para editar -->
+                            <a href="@Url.Action("EditarExistencia", "JuegosMesa", new { id = juego.CodigoInterno })" class="btn btn-outline-primary mt-auto">Editar existencias</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
