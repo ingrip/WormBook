@@ -13,20 +13,49 @@ namespace WormBook.Controllers
         {
             _context = context;
         }
-
-        // GET: /JuegoMesa
         public async Task<IActionResult> JuegoMesa()
         {
             var juegos = await _context.Juegomesas
-                .Include(j => j.CodigoInternoNavigation)    // Cargar el Producto
-                .ThenInclude(p => p.Existencia)             // Incluir las Existencias del Producto
-                .ThenInclude(e => e.CodigosucursalNavigation) // Incluir las sucursales asociadas a las Existenci
-                                                              // as
+                .Include(j => j.CodigointernoNavigation)
+                .ThenInclude(p => p.Existencia)
+                .ThenInclude(e => e.CodigosucursalNavigation)
                 .ToListAsync();
+
+          
 
             return View(juegos);
         }
+        [HttpGet]
+        [HttpGet]
+        public IActionResult GetSucursalesYExistencias(int juegoId)
+        {
+            var juego = _context.Juegomesas
+                .Include(j => j.CodigointernoNavigation.Existencia)
+                .ThenInclude(e => e.CodigosucursalNavigation)
+                .FirstOrDefault(j => j.Codigointerno == juegoId);
 
+            if (juego == null)
+            {
+                return NotFound();
+            }
+
+            var sucursales = juego.CodigointernoNavigation.Existencia
+                .Select(e => new
+                {
+                    e.Codigosucursal,
+                    e.CodigosucursalNavigation.Nombresucursal
+                }).ToList();
+
+            var existencias = juego.CodigointernoNavigation.Existencia
+                .Select(e => new
+                {
+                    e.Codigosucursal,
+                    e.Existencia,
+                    e.CodigosucursalNavigation.Nombresucursal
+                }).ToList();
+
+            return Json(new { sucursales = sucursales, existencias = existencias });
+        }
 
 
     }

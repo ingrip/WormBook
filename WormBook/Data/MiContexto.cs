@@ -15,20 +15,37 @@ public partial class MiContexto : DbContext
     {
     }
 
+
     public virtual DbSet<Cliente> Clientes { get; set; }
+
     public virtual DbSet<Envio> Envios { get; set; }
+
     public virtual DbSet<Existencium> Existencia { get; set; }
+
     public virtual DbSet<Juegomesa> Juegomesas { get; set; }
+
     public virtual DbSet<Libro> Libros { get; set; }
+
     public virtual DbSet<Pedidoespecial> Pedidoespecials { get; set; }
+
     public virtual DbSet<ProductPriv> ProductPrivs { get; set; }
+
     public virtual DbSet<Producto> Productos { get; set; }
+
     public virtual DbSet<Productosenviado> Productosenviados { get; set; }
+
     public virtual DbSet<Productovendido> Productovendidos { get; set; }
+
+  
+
     public virtual DbSet<Repodetalle> Repodetalles { get; set; }
+
     public virtual DbSet<Repopedido> Repopedidos { get; set; }
+
     public virtual DbSet<Sucursal> Sucursals { get; set; }
+
     public virtual DbSet<Tarjetaregalo> Tarjetaregalos { get; set; }
+
     public virtual DbSet<Ventum> Venta { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -39,6 +56,7 @@ public partial class MiContexto : DbContext
     {
         modelBuilder.UseCollation("USING_NLS_COMP");
 
+ 
 
         modelBuilder.Entity<Cliente>(entity =>
         {
@@ -118,13 +136,14 @@ public partial class MiContexto : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_EXISTENCIA_SUCURSAL");
         });
+
         modelBuilder.Entity<Juegomesa>(entity =>
         {
-            entity.HasKey(e => e.CodigoInterno);
+            entity.HasKey(e => e.Codigointerno);
 
             entity.ToTable("JUEGOMESA");
 
-            entity.Property(e => e.CodigoInterno)
+            entity.Property(e => e.Codigointerno)
                 .HasPrecision(10)
                 .ValueGeneratedNever()
                 .HasColumnName("CODIGOINTERNO");
@@ -140,8 +159,8 @@ public partial class MiContexto : DbContext
                .HasMaxLength(255)
                .IsUnicode(false)
                .HasColumnName("URL");
-            entity.HasOne(d => d.CodigoInternoNavigation).WithOne(p => p.Juegomesa)
-                .HasForeignKey<Juegomesa>(d => d.CodigoInterno)
+            entity.HasOne(d => d.CodigointernoNavigation).WithOne(p => p.Juegomesa)
+                .HasForeignKey<Juegomesa>(d => d.Codigointerno)
                 .HasConstraintName("FK_JUEGOMESA_PRODUCTO");
         });
 
@@ -338,7 +357,6 @@ public partial class MiContexto : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PRODUCTOVENDIDO_VENTA");
         });
-
         modelBuilder.Entity<Repodetalle>(entity =>
         {
             entity.HasKey(e => new { e.CodigoInterno, e.Numrepo });
@@ -386,7 +404,6 @@ public partial class MiContexto : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_REPOPEDIDO_SUCURSAL");
         });
-
         modelBuilder.Entity<Sucursal>(entity =>
         {
             entity.HasKey(e => e.Codigosucursal);

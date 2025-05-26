@@ -1,6 +1,4 @@
-﻿@model List<Juegomesa>
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8" />
@@ -9,64 +7,113 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
     <style>
-        background: #f8f9fa;
-        font-family: 'Segoe UI', sans-serif;
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
         }
 
         .card {
             border: none;
-            border-radius: 16px;
-            transition: transform 0.3s ease;
-            height: 420px; /* altura fija para que todas sean iguales */
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            border-radius: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            }
+
         .card-img-top {
-            height: 200px; /* altura fija para la imagen */
-            width: 100%;
-            object-fit: cover; /* recorta y mantiene proporción sin deformar */
-            border-top-left-radius: 16px;
-            border-top-right-radius: 16px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            object-fit: cover;
+            height: 250px;
         }
 
         .card-body {
-            flex-grow: 1; /* para que el cuerpo llene el espacio restante */
+            padding: 1.5rem;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
         }
 
-        .card:hover {
-            transform: scale(1.03);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-text {
+            color: #777;
         }
 
         .btn-primary {
-            border-radius: 50px;
-            font-weight: bold;
+            border-radius: 30px;
+            background: #80b3ff;
+            border-color: #80b3ff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: background 0.3s ease, transform 0.3s ease;
         }
+
+            .btn-primary:hover {
+                background: #6fa0ff;
+                transform: translateY(-2px);
+            }
 
         .modal-content {
             border-radius: 16px;
+            background-color: #f9f9f9;
         }
 
         .modal-header {
-            color: black;
-            border-bottom: none;
+            border-bottom: 1px solid #eee;
+            background-color: #80b3ff;
+            color: white;
+            font-weight: 600;
             border-top-left-radius: 16px;
             border-top-right-radius: 16px;
         }
 
+        .modal-footer {
+            border-top: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+
+        .form-select, .form-control {
+            border-radius: 10px;
+            box-shadow: none;
+            border: 1px solid #ddd;
+        }
+
+            .form-select:focus, .form-control:focus {
+                border-color: #80b3ff;
+                box-shadow: 0 0 8px rgba(128, 179, 255, 0.5);
+            }
+
+        .form-label {
+            font-weight: bold;
+        }
+
         .modal-body {
-            background-color: #fdfdfe;
+            padding: 2rem;
+        }
+
+        .existencia-input {
+            max-width: 120px;
         }
     </style>
 </head>
 <body>
+
     <div class="container py-5">
-        <h1 class="text-center mb-5 text-primary">🎲 Inventario de Juegos de Mesa</h1>
+        <h1 class="text-center mb-5 text-primary display-4">🎲 Catálogo de Juegos de Mesa</h1>
 
         <div class="row justify-content-center">
             @foreach (var juego in Model)
@@ -77,34 +124,26 @@
                         <div class="card-body d-flex flex-column">
                             <h4 class="card-title text-dark">@juego.Nombre</h4>
                             <p class="text-muted">@juego.Marca</p>
-                            <p><strong>Código:</strong> @juego.CodigoInterno</p>
-
-                            <!-- Existencia total -->
+                            <p><strong>Código:</strong> @juego.Codigointerno</p>
                             <p>
                                 <strong>Existencia total:</strong>
                                 @{
                                     int existenciaTotal = 0;
-                                    foreach (var existencia in juego.CodigoInternoNavigation.Existencia)
+                                    if (juego.CodigointernoNavigation?.Existencia != null)
                                     {
-                                        existenciaTotal += existencia.Existencia; // Sumar las existencias
+                                        foreach (var existencia in juego.CodigointernoNavigation.Existencia)
+                                        {
+                                            existenciaTotal += existencia.Existencia;
+                                        }
                                     }
                                 }
                                 @existenciaTotal
                             </p>
 
-                            <!-- Existencias por sucursal -->
-                            <div class="text-start" style="max-height: 120px; overflow-y: auto;">
-                                <strong>Existencia por sucursal:</strong>
-                                <ul class="list-unstyled small">
-                                    @foreach (var existencia in juego.CodigoInternoNavigation.Existencia)
-                                    {
-                                        <li>@existencia.CodigosucursalNavigation.Nombresucursal: @existencia.Existencia unidades</li>
-                                    }
-                                </ul>
-                            </div>
+                            <button class="btn btn-primary mt-auto" id="btnEditar" data-bs-toggle="modal" data-bs-target="#editExistenciasModal" data-juego-id="@juego.Codigointerno">
+                                <i class="bi bi-pencil-square"></i> Editar Existencias
+                            </button>
 
-                            <!-- Opcional: botón para editar -->
-                            <a href="@Url.Action("EditarExistencia", "JuegosMesa", new { id = juego.CodigoInterno })" class="btn btn-outline-primary mt-auto">Editar existencias</a>
                         </div>
                     </div>
                 </div>
@@ -112,6 +151,111 @@
         </div>
     </div>
 
+    <!-- Modal de edición de existencias -->
+    <div class="modal fade" id="editExistenciasModal" tabindex="-1" aria-labelledby="editExistenciasModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editExistenciasModalLabel">Editar Existencias por Sucursal</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editExistenciasForm" method="post" action="@Url.Action("GuardarExistencias", "JuegosMesa")">
+                        <input type="hidden" id="juegoId" name="juegoId" />
+                        <div class="mb-3">
+                            <label for="sucursalSelect" class="form-label">Seleccionar Sucursal</label>
+                            <select id="sucursalSelect" class="form-select" required>
+                                <option selected disabled>Selecciona una sucursal...</option>
+                                @foreach (var sucursal in Model[0].CodigointernoNavigation.Existencia)
+                                {
+                                    <option value="@sucursal.Codigosucursal">@sucursal.CodigosucursalNavigation.Nombresucursal</option>
+                                }
+                            </select>
+                        </div>
+                        <div id="existenciasList"></div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                    <button type="submit" class="btn btn-primary" form="editExistenciasForm">
+                        <i class="bi bi-save"></i> Guardar cambios
+                    </button>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var existencias = [];
+
+            // Evento que se dispara al abrir el modal
+            $('#editExistenciasModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Botón que activó el modal
+                var juegoId = button.data('juego-id'); // Obtiene el ID del juego
+                console.log(juegoId); // Verifica si el ID está llegando correctamente
+
+                // Limpiar los campos del modal antes de cargar nuevos datos
+                var sucursalSelect = $('#sucursalSelect');
+                sucursalSelect.empty(); // Limpiar las opciones previas
+                sucursalSelect.append('<option selected disabled>Selecciona una sucursal...</option>'); // Opción por defecto
+                var existenciasList = $('#existenciasList');
+                existenciasList.empty(); // Limpiar los campos de existencias
+
+                // Realizar una solicitud AJAX para obtener las sucursales y existencias
+                $.ajax({
+                    url: '@Url.Action("GetSucursalesYExistencias", "JuegoMesa")/' + juegoId, // Asegúrate de que esta URL esté bien configurada
+                    type: 'GET',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data); // Verifica los datos que llegan
+
+                        // Llenar el select con las sucursales
+                        $.each(data.sucursales, function (index, sucursal) {
+                            sucursalSelect.append('<option value="' + sucursal.Codigosucursal + '">' + sucursal.Nombresucursal + '</option>');
+                        });
+
+                        // Guardar las existencias para este juego
+                        existencias = data.existencias;
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error cargando sucursales y existencias:', error);
+                    }
+                });
+            });
+
+            // Evento cuando el usuario selecciona una sucursal
+            $('#sucursalSelect').change(function () {
+                var selectedSucursal = $(this).val();
+                var existenciaSeleccionada = existencias.find(function (e) {
+                    return e.Codigosucursal === selectedSucursal;
+                });
+
+                var existenciasList = $('#existenciasList');
+                existenciasList.empty(); // Limpiar los campos anteriores
+
+                if (existenciaSeleccionada) {
+                    // Si hay existencias para la sucursal, muestra el campo de entrada
+                    var div = $('<div class="mb-3"></div>');
+                    div.append('<label for="existencia_' + existenciaSeleccionada.Codigosucursal + '" class="form-label">' +
+                        'Existencia en ' + existenciaSeleccionada.CodigosucursalNavigation.Nombresucursal + '</label>');
+                    div.append('<input type="number" class="form-control existencia-input" name="existencia_' +
+                        existenciaSeleccionada.Codigosucursal + '" value="' + existenciaSeleccionada.Existencia + '" required />');
+                    existenciasList.append(div);
+                } else {
+                    // Si no hay existencias para la sucursal, muestra un campo vacío
+                    var div = $('<div class="mb-3"></div>');
+                    div.append('<label for="existencia_' + selectedSucursal + '" class="form-label">Ingrese existencia para la sucursal seleccionada</label>');
+                    div.append('<input type="number" class="form-control existencia-input" name="existencia_' + selectedSucursal + '" value="" required />');
+                    existenciasList.append(div);
+                }
+            });
+        });
+
+    </script>
+
+
 </body>
 </html>
