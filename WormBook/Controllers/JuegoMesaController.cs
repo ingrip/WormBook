@@ -25,36 +25,59 @@ namespace WormBook.Controllers
 
             return View(juegos);
         }
-        [HttpGet]
-        [HttpGet]
-        public IActionResult GetSucursalesYExistencias(int juegoId)
+        [HttpPost]
+        public JsonResult GetSucursalesYExistencias(int juegoId)
         {
-            var juego = _context.Juegomesas
-                .Include(j => j.CodigointernoNavigation.Existencia)
-                .ThenInclude(e => e.CodigosucursalNavigation)
-                .FirstOrDefault(j => j.Codigointerno == juegoId);
+            var existencias = _context.Existencia
+                .Where(e => e.CodigoInterno == juegoId)
+                .Select(e => new {
+                    Codigosucursal = e.Codigosucursal,
+                    Existencia = e.Existencia,
+                    Nombresucursal = e.CodigosucursalNavigation.Nombresucursal,
+                })
+                .ToList();
 
-            if (juego == null)
+
+
+            return Json(new { existencias });
+        }
+
+        [HttpPost]
+        public IActionResult GuardarExistencias([FromBody] SucursalExistenciaDto request)
+        {
+            try
             {
-                return NotFound();
+                var existencia = _context.Existencia
+                    .FirstOrDefault(e => e.CodigoInterno == request.JuegoId && e.Codigosucursal == request.CodigoSucursal);
+
+                if (existencia != null)
+                {
+                    existencia.Existencia = request.Existencia;
+                }
+                else
+                {
+                    _context.Existencia.Add(new Existencium
+                    {
+                        CodigoInterno = request.JuegoId,
+                        Codigosucursal = request.CodigoSucursal,
+                        Existencia = request.Existencia
+                    });
+                }
+
+                _context.SaveChanges();
+                return Json(new { success = true, message = "Existencia guardada correctamente." });
             }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al guardar existencia: " + ex.Message });
+            }
+        }
 
-            var sucursales = juego.CodigointernoNavigation.Existencia
-                .Select(e => new
-                {
-                    e.Codigosucursal,
-                    e.CodigosucursalNavigation.Nombresucursal
-                }).ToList();
-
-            var existencias = juego.CodigointernoNavigation.Existencia
-                .Select(e => new
-                {
-                    e.Codigosucursal,
-                    e.Existencia,
-                    e.CodigosucursalNavigation.Nombresucursal
-                }).ToList();
-
-            return Json(new { sucursales = sucursales, existencias = existencias });
+        public class SucursalExistenciaDto
+        {
+            public int JuegoId { get; set; }
+            public int CodigoSucursal { get; set; }
+            public int Existencia { get; set; }
         }
 
 

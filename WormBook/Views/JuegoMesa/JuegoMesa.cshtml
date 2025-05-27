@@ -160,102 +160,159 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form id="editExistenciasForm" method="post" action="@Url.Action("GuardarExistencias", "JuegosMesa")">
-                        <input type="hidden" id="juegoId" name="juegoId" />
+                       <input type="hidden" id="juegoId" name="juegoId" />
                         <div class="mb-3">
                             <label for="sucursalSelect" class="form-label">Seleccionar Sucursal</label>
                             <select id="sucursalSelect" class="form-select" required>
                                 <option selected disabled>Selecciona una sucursal...</option>
-                                @foreach (var sucursal in Model[0].CodigointernoNavigation.Existencia)
-                                {
-                                    <option value="@sucursal.Codigosucursal">@sucursal.CodigosucursalNavigation.Nombresucursal</option>
-                                }
                             </select>
+
                         </div>
                         <div id="existenciasList"></div>
-                    </form>
+                 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" form="editExistenciasForm">
+                    <button type="button" id="btnGuardarCambios" class="btn btn-primary">
                         <i class="bi bi-save"></i> Guardar cambios
                     </button>
-
                 </div>
             </div>
         </div>
     </div>
+    <!-- Carga de jQuery (debe ir primero) -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        $(document).ready(function () {
-            var existencias = [];
+                  $(document).ready(function () {
+          var existencias = [];
 
-            // Evento que se dispara al abrir el modal
-            $('#editExistenciasModal').on('show.bs.modal', function (event) {
-                var button = $(event.relatedTarget); // Botón que activó el modal
-                var juegoId = button.data('juego-id'); // Obtiene el ID del juego
-                console.log(juegoId); // Verifica si el ID está llegando correctamente
+          $('#editExistenciasModal').off('show.bs.modal').on('show.bs.modal', function (event) {
+              var button = $(event.relatedTarget);
+              var juegoId = button.data('juego-id');
 
-                // Limpiar los campos del modal antes de cargar nuevos datos
-                var sucursalSelect = $('#sucursalSelect');
-                sucursalSelect.empty(); // Limpiar las opciones previas
-                sucursalSelect.append('<option selected disabled>Selecciona una sucursal...</option>'); // Opción por defecto
-                var existenciasList = $('#existenciasList');
-                existenciasList.empty(); // Limpiar los campos de existencias
+              console.log("Abrir modal para juegoId:", juegoId);
 
-                // Realizar una solicitud AJAX para obtener las sucursales y existencias
-                $.ajax({
-                    url: '@Url.Action("GetSucursalesYExistencias", "JuegoMesa")/' + juegoId, // Asegúrate de que esta URL esté bien configurada
-                    type: 'GET',
-                    dataType: 'json',
-                    success: function (data) {
-                        console.log(data); // Verifica los datos que llegan
+              $('#juegoId').val(juegoId);
+              $('#sucursalSelect').off('change').empty().append('<option selected disabled>Selecciona una sucursal...</option>');
+              $('#existenciasList').empty();
 
-                        // Llenar el select con las sucursales
-                        $.each(data.sucursales, function (index, sucursal) {
-                            sucursalSelect.append('<option value="' + sucursal.Codigosucursal + '">' + sucursal.Nombresucursal + '</option>');
-                        });
+              $.ajax({
+                  url: '@Url.Action("GetSucursalesYExistencias", "JuegoMesa")',
+                  type: 'POST',
+                  data: { juegoId: juegoId },
+                  dataType: 'json',
+                  success: function (data) {
+                      existencias = data.existencias;
+                      console.log("Existencias recibidas:", existencias);
 
-                        // Guardar las existencias para este juego
-                        existencias = data.existencias;
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Error cargando sucursales y existencias:', error);
+                      const codigosAgregados = new Set();
+
+                      // Llenar el select con sucursales únicas
+                      existencias.forEach(function (e) {
+                          if (!codigosAgregados.has(e.codigosucursal)) {
+                              codigosAgregados.add(e.codigosucursal);
+
+                              $('#sucursalSelect').append(
+                                  `<option value="${e.codigosucursal}">${e.nombresucursal}</option>`
+                              );
+                          }
+                          console.log(e.codigosucursal + e.nombresucursal);
+                      });
+
+                      console.log("Sucursales agregadas al select:", [...codigosAgregados]);
+
+                      $('#sucursalSelect').off('change').on('change', function () {
+                          var selectedSucursal = $(this).val();
+                          console.log("Sucursal seleccionada:", selectedSucursal);
+
+                          var existenciaSeleccionada = existencias.find(function (e) {
+                              return e.codigosucursal.toString() === selectedSucursal.toString();
+                          });
+
+                          console.log("Existencia correspondiente:", existenciaSeleccionada);
+
+                          var existenciasList = $('#existenciasList');
+                          existenciasList.empty();
+
+                          var div = $('<div class="mb-3"></div>');
+
+                          if (existenciaSeleccionada) {
+                              div.append(
+                                  `<label for="existencia_${selectedSucursal}" class="form-label">Existencia en ${existenciaSeleccionada.nombresucursal}</label>`
+                              );
+                              div.append(
+                                  `<input type="number" class="form-control existencia-input" name="existencia_${selectedSucursal}" value="${existenciaSeleccionada.existencia}" id="$existencia_${selectedSucursal}" required />`
+                              );
+                          } else {
+                              div.append(
+                                  `<label for="existencia_${selectedSucursal}" class="form-label">Ingrese existencia para la sucursal seleccionada</label>`
+                              );
+                              div.append(
+                                  `<input type="number" class="form-control existencia-input" name="existencia_${selectedSucursal}"  value="" required />`
+                              );
+                          }
+
+                          existenciasList.append(div);
+                      });
+                  },
+                  error: function (xhr, status, error) {
+                      console.error('Error AJAX:', error);
+                  }
+              });
+          });
+
+        $('#btnGuardarCambios').on('click', function () {
+            var juegoId = $('#editExistenciasModal').find('#juegoId').val();
+            var selectedOption = $('#sucursalSelect').find('option:selected');
+            var codigoSucursal = selectedOption.val();
+            var existencia = parseInt($('#existenciasList').find('input').val());
+
+            if (!juegoId) {
+                alert("No hay juego seleccionado.");
+                return;
+            }
+            if (!codigoSucursal) {
+                alert("Selecciona una sucursal.");
+                return;
+            }
+            if (isNaN(existencia) || existencia < 0) {
+                alert("Ingresa una existencia válida.");
+                return;
+            }
+
+            // Enviar como JSON
+            const payload = {
+                JuegoId: parseInt(juegoId),
+                CodigoSucursal: parseInt(codigoSucursal),
+                Existencia: parseInt(existencia)
+            };
+
+            $.ajax({
+                url: '@Url.Action("GuardarExistencias", "JuegoMesa")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(payload),
+                success: function (response) {
+                    if (response.success) {
+                        alert(response.message || "Existencia guardada correctamente.");
+                        $('#editExistenciasModal').modal('hide');
+                        location.reload();
+                    } else {
+                        alert(response.message || "Error al guardar existencia.");
                     }
-                });
-            });
-
-            // Evento cuando el usuario selecciona una sucursal
-            $('#sucursalSelect').change(function () {
-                var selectedSucursal = $(this).val();
-                var existenciaSeleccionada = existencias.find(function (e) {
-                    return e.Codigosucursal === selectedSucursal;
-                });
-
-                var existenciasList = $('#existenciasList');
-                existenciasList.empty(); // Limpiar los campos anteriores
-
-                if (existenciaSeleccionada) {
-                    // Si hay existencias para la sucursal, muestra el campo de entrada
-                    var div = $('<div class="mb-3"></div>');
-                    div.append('<label for="existencia_' + existenciaSeleccionada.Codigosucursal + '" class="form-label">' +
-                        'Existencia en ' + existenciaSeleccionada.CodigosucursalNavigation.Nombresucursal + '</label>');
-                    div.append('<input type="number" class="form-control existencia-input" name="existencia_' +
-                        existenciaSeleccionada.Codigosucursal + '" value="' + existenciaSeleccionada.Existencia + '" required />');
-                    existenciasList.append(div);
-                } else {
-                    // Si no hay existencias para la sucursal, muestra un campo vacío
-                    var div = $('<div class="mb-3"></div>');
-                    div.append('<label for="existencia_' + selectedSucursal + '" class="form-label">Ingrese existencia para la sucursal seleccionada</label>');
-                    div.append('<input type="number" class="form-control existencia-input" name="existencia_' + selectedSucursal + '" value="" required />');
-                    existenciasList.append(div);
+                },
+                error: function (xhr, status, error) {
+                    alert("Error en la solicitud: " + error);
                 }
             });
         });
 
-    </script>
 
+            });
+
+
+    </script>
 
 </body>
 </html>
