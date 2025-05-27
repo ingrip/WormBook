@@ -649,3 +649,31 @@ INSERT INTO ProductoVendido VALUES (10016, 28, 2);
 INSERT INTO ProductoVendido VALUES (10017, 29, 1);
 INSERT INTO ProductoVendido VALUES (10018, 29, 1);
 INSERT INTO ProductoVendido VALUES (10003, 30, 1);
+-- Agregar URL a los libros, juegos de mesa y tarjetas 
+ALTER TABLE Libro
+ADD URL VARCHAR2(255);
+
+ALTER TABLE JuegoMesa
+ADD URL VARCHAR2(255);
+
+ALTER TABLE TarjetaRegalo
+ADD URL VARCHAR2(255);
+
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/6197NHIuvAL._AC_UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10001;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/81GdvpmsH1L.jpg' WHERE CodigoInterno = 10002;
+UPDATE Libro SET URL = 'https://images.cdn1.buscalibre.com/fit-in/520x520/6c/dc/6cdca797aa4ff4ecdc9a8d6816627c1f.jpg' WHERE CodigoInterno = 10003;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/81plBFoPgtL._AC_UF350,350_QL50_.jpg' WHERE CodigoInterno = 10004;
+UPDATE Libro SET URL = 'https://www.rae.es/sites/default/files/portada_cien_anos_de_soledad_0.jpg' WHERE CodigoInterno = 10005;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/M/MV5BZmJkMGIxOWYtZmExZS00MzkxLWE2ZjItYWYyMDgwYTczZGRkXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg' WHERE CodigoInterno = 10006;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/91AD20mBK4L._AC_UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10007;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/71xUCZbuogL._AC_UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10008;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/71mssSA7QgL._AC_UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10009;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/51R9GoucIIL._AC_UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10010;
+UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/715coA35k-L._UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10011;
+UPDATE Libro SET URL = 'https://www.penguinlibros.com/mx/3078707-large_default/tan-poca-vida.webp' WHERE CodigoInterno = 10012;
+UPDATE JuegoMesa SET URL = 'https://assets.infinitygamingtable.com/assets/GameIcons/4/icon-0000000669/Monopolygreen__FitMaxWzI1NiwyNTZd.png' WHERE CodigoInterno = 10013;
+UPDATE JuegoMesa SET URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd4T-ADLQnEGO9xBnXpiujhnu1EqYjqSCUCw&s' WHERE CodigoInterno = 10014;
+UPDATE JuegoMesa SET URL = 'https://m.media-amazon.com/images/I/71xfEOIdUWL.jpg' WHERE CodigoInterno = 10015;
+UPDATE JuegoMesa SET URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKDN7AVq6inthCJLTNJQMJFjJm4JUGroYMJA&s' WHERE CodigoInterno = 10016;
+UPDATE TarjetaRegalo SET URL = 'https://media.istockphoto.com/id/1361203739/es/vector/icono-de-tarjeta-de-regalo-en-estilo-plano-ilustraci%C3%B3n-vectorial-de-cup%C3%B3n-de-descuento-en.jpg?s=612x612&w=0&k=20&c=1HMoUK12jCLUKXFLHSzwODJXLxMPXCaHLboTz0Mn6lo=' WHERE CodigoInterno = 10017;
+UPDATE TarjetaRegalo SET URL = 'https://media.istockphoto.com/id/1361203739/es/vector/icono-de-tarjeta-de-regalo-en-estilo-plano-ilustraci%C3%B3n-vectorial-de-cup%C3%B3n-de-descuento-en.jpg?s=612x612&w=0&k=20&c=1HMoUK12jCLUKXFLHSzwODJXLxMPXCaHLboTz0Mn6lo=' WHERE CodigoInterno = 10018;
