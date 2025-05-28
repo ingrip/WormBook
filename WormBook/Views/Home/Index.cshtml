@@ -1,47 +1,65 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
+    bool isLoggedIn = (bool)(ViewData["IsLoggedIn"] ?? false);
 }
 
 <div class="text-center">
-    <div id="carouselExampleDark" class="carousel carousel-dark slide">
-        <div class="carousel-indicators">
-            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-            <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+    @if (isLoggedIn)
+    {
+        <form method="post" action="@Url.Action("Logout", "Login")" style="display:inline;">
+            <button type="submit" class="btn btn-danger" style="margin:10px; padding:10px 20px;">
+                Cerrar sesión
+            </button>
+        </form>
+    }
+    else
+    {
+        <form method="post" action="@Url.Action("Logout", "Login")" style="display:inline;">
+            <button type="submit" class="btn btn-danger" style="margin:10px; padding:10px 20px;">
+                Cerrar sesión
+            </button>
+        </form>
+        <div id="carouselExampleDark" class="carousel carousel-dark slide">
+            <!-- ...tu código del carousel aquí... -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active" data-bs-interval="10000" style="cursor:pointer;"
+                     onclick="window.location.href='@Url.Action("Privacy", "Home")'">
+                    <img src="img/PedirLIbro.gif" class="d-block w-100" alt="Pedir Libro" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Pedir un libro</h5>
+                        <p>¿No encuentras un libro? Pídelo con nosotros.</p>
+                    </div>
+                </div>
+                <div class="carousel-item" data-bs-interval="2000" style="cursor:pointer;"
+                     onclick="window.location.href='@Url.Action("BuyBooks", "Books")'">
+                    <img src="img/ComprarLibro.gif" class="d-block w-100" alt="Comprar Libro" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Comprar un libro</h5>
+                        <p>Explora nuestra variedad y compra tu favorito con nosotros.</p>
+                    </div>
+                </div>
+                <div class="carousel-item" style="cursor:pointer;"
+                     onclick="window.location.href='@Url.Action("JuegoMesa", "Comprar")'">
+                    <img src="img/Juegosdemesa.png" class="d-block w-100" alt="Juegos de mesa" />
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Para los más peques</h5>
+                        <p>Explora nuestra sección de juegos de mesa.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <div class="carousel-inner">
-            <div class="carousel-item active" data-bs-interval="10000" style="cursor:pointer;"
-                 onclick="window.location.href='@Url.Action("Home", "Privacy")'">
-                <img src="img/PedirLIbro.gif" class="d-block w-100" alt="" href="/JuegoMesa"></a>
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Pedir un libro</h5>
-                    <p>¿No encuentras un libro? Pidelo con nosotros.</p>
-                </div>
-            </div>
-            <div class="carousel-item" data-bs-interval="2000" style="cursor:pointer;"
-                 onclick="window.location.href='@Url.Action("BuyBooks", "Books")'">
-                <img src="img/ComprarLibro.gif" class="d-block w-100" alt="...">
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Comprar un libro</h5>
-                    <p> Explora nuestra variedad de opciones y compra tu favorito con nosotros.</p>
-                </div>
-            </div>
-            <div class="carousel-item" style="cursor:pointer;"
-                 onclick="window.location.href='@Url.Action("JuegoMesa", "JuegoMesa")'">
-                <img src="img/Juegosdemesa.png" class="d-block w-100" >
-                <div class="carousel-caption d-none d-md-block">
-                    <h5>Para los más peques</h5>
-                    <p>Explora nuestra sección de juegos de mesa.</p>
-                </div>
-            </div>
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>
+    }
 </div>

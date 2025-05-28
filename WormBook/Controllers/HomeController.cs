@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WormBook.Models;
 
@@ -13,8 +14,12 @@ namespace WormBook.Controllers
             _logger = logger;
         }
 
+        [AllowAnonymous]  // Permite acceso público sin login
         public IActionResult Index()
         {
+            var userEmail = HttpContext.Session.GetString("user");
+
+            ViewData["IsLoggedIn"] = !string.IsNullOrEmpty(userEmail);
             return View();
         }
 
