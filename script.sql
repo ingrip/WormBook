@@ -1,33 +1,20 @@
 
 --Script
-DROP TABLE  cliente             CASCADE CONSTRAINTS;
 DROP TABLE  envio           CASCADE CONSTRAINTS;
 DROP TABLE  existencia           CASCADE CONSTRAINTS;
 DROP TABLE  juegomesa                CASCADE CONSTRAINTS;
 DROP TABLE  libro   CASCADE CONSTRAINTS;
-DROP TABLE  pedidoespecial            CASCADE CONSTRAINTS;
 DROP TABLE  producto             CASCADE CONSTRAINTS;
 DROP TABLE  productosenviados           CASCADE CONSTRAINTS;
 DROP TABLE  sucursal   CASCADE CONSTRAINTS;
 DROP TABLE  venta            CASCADE CONSTRAINTS;
 DROP TABLE  productovendido            CASCADE CONSTRAINTS;
 
-CREATE TABLE Cliente
-(
-	IdCliente            INTEGER NOT NULL,
-	Nombre        VARCHAR2(50) NOT NULL,
-	Apellido        VARCHAR2(50) NOT NULL,
-	Telefono             VARCHAR2(20) NOT NULL
-);
-
-ALTER TABLE Cliente
-	ADD CONSTRAINT PK_Cliente PRIMARY KEY (IdCliente);
-
 CREATE TABLE Envio
 (
 	GuiaEnvio            INTEGER NOT NULL ,
 	NumCajas             INTEGER NOT NULL ,
-	SucursalDestino      INTEGER NOT NULL ,
+	Destino      INTEGER NOT NULL ,
 	SucursalOrigen       INTEGER NOT NULL 
 );
 
@@ -66,21 +53,6 @@ CREATE TABLE Libro
 ALTER TABLE Libro
 	ADD CONSTRAINT  PK_Libro PRIMARY KEY (CodigoInterno);
 
-CREATE TABLE PedidoEspecial
-(
-	NumPedido            INTEGER NOT NULL,
-	FechaPedido          DATE NOT NULL,
-	CantidadPedida       INTEGER NOT NULL,
-	Estado               VARCHAR2(20) NOT NULL 
-CHECK (Estado IN ('Pendiente', 'Conseguido', 'No conseguido', 'Entregado')),
-	CodigoInterno        INTEGER NOT NULL,
-	CodigoSucursal       INTEGER NOT NULL,
-	IdCliente            INTEGER NOT NULL 
-);
-
-ALTER TABLE PedidoEspecial
-	ADD CONSTRAINT  PK_PedidoEspecial PRIMARY KEY (NumPedido);
-
 
 CREATE TABLE Producto
 (
@@ -96,10 +68,7 @@ CREATE TABLE ProductosEnviados
 (
 	CodigoInterno        INTEGER NOT NULL,
 	GuiaEnvio            INTEGER NOT NULL,
-	CantidadEnviada      INTEGER NOT NULL,
-Novedad VARCHAR2(20) NOT NULL 
-		CHECK (Novedad IN ('Novedad', ' ')),
-	NumPedidoEsp            INTEGER NULL 
+	CantidadEnviada      INTEGER NOT NULL
 );
 
 ALTER TABLE ProductosEnviados
@@ -138,9 +107,6 @@ ALTER TABLE Venta
 	ADD CONSTRAINT  PK_Venta PRIMARY KEY (NumVenta);
 
 ALTER TABLE Envio
-	ADD (CONSTRAINT R_27 FOREIGN KEY (SucursalDestino) REFERENCES Sucursal (CodigoSucursal));
-
-ALTER TABLE Envio
 	ADD (CONSTRAINT R_49 FOREIGN KEY (SucursalOrigen) REFERENCES Sucursal (CodigoSucursal));
 
 ALTER TABLE Existencia
@@ -155,23 +121,11 @@ ALTER TABLE JuegoMesa
 ALTER TABLE Libro
 	ADD (FOREIGN KEY (CodigoInterno) REFERENCES Producto(CodigoInterno) ON DELETE CASCADE);
 
-ALTER TABLE PedidoEspecial
-	ADD (CONSTRAINT R_30 FOREIGN KEY (IdCliente) REFERENCES Cliente (IdCliente));
-
-ALTER TABLE PedidoEspecial
-	ADD (CONSTRAINT R_32 FOREIGN KEY (CodigoInterno) REFERENCES Producto (CodigoInterno));
-
-ALTER TABLE PedidoEspecial
-	ADD (CONSTRAINT R_33 FOREIGN KEY (CodigoSucursal) REFERENCES Sucursal (CodigoSucursal));
-
 ALTER TABLE ProductosEnviados
 	ADD (CONSTRAINT R_12 FOREIGN KEY (CodigoInterno) REFERENCES Producto (CodigoInterno));
 
 ALTER TABLE ProductosEnviados
 	ADD (CONSTRAINT R_13 FOREIGN KEY (GuiaEnvio) REFERENCES Envio (GuiaEnvio));
-
-ALTER TABLE ProductosEnviados
-	ADD (CONSTRAINT R_31 FOREIGN KEY (NumPedidoEsp) REFERENCES PedidoEspecial (NumPedido));
 
 ALTER TABLE ProductoVendido
 	ADD (CONSTRAINT R_10 FOREIGN KEY (CodigoInterno) REFERENCES Producto (CodigoInterno));
@@ -183,16 +137,11 @@ ALTER TABLE Venta
 	ADD (CONSTRAINT R_26 FOREIGN KEY (CodigoSucursal) REFERENCES Sucursal (CodigoSucursal));
 
 ALTER TABLE Existencia DROP CONSTRAINT R_9;
-ALTER TABLE PedidoEspecial DROP CONSTRAINT R_32;
 ALTER TABLE ProductosEnviados DROP CONSTRAINT R_12;
 ALTER TABLE ProductoVendido DROP CONSTRAINT R_10;
 
 ALTER TABLE Existencia
     ADD CONSTRAINT R_9 FOREIGN KEY (CodigoInterno) 
-    REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
-
-ALTER TABLE PedidoEspecial
-    ADD CONSTRAINT R_32 FOREIGN KEY (CodigoInterno) 
     REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
 
 ALTER TABLE ProductosEnviados
@@ -202,19 +151,6 @@ ALTER TABLE ProductosEnviados
 ALTER TABLE ProductoVendido
     ADD CONSTRAINT R_10 FOREIGN KEY (CodigoInterno) 
     REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
-
-
---Clientes
-INSERT INTO Cliente VALUES (101, 'Laura', 'Martínez', 3112345678);
-INSERT INTO Cliente VALUES (102, 'Ricardo', 'González', 3155551234);
-INSERT INTO Cliente VALUES (103, 'Isabel', 'Díaz', 3209876543);
-INSERT INTO Cliente VALUES (104, 'Oscar', 'Herrera', 3001122334);
-INSERT INTO Cliente VALUES (105, 'Adriana', 'Castro', 3187654321);
-INSERT INTO Cliente VALUES (106, 'Fernando', 'Rojas', 3141592653);
-INSERT INTO Cliente VALUES (107, 'Diana', 'Mendoza', 3171828182);
-INSERT INTO Cliente VALUES (108, 'Javier', 'Cordero', 3223344556);
-INSERT INTO Cliente VALUES (109, 'Patricia', 'Vargas', 3010203040);
-INSERT INTO Cliente VALUES (110, 'Gabriel', 'Peña', 3198765432);
 
 -- Sucursal
 INSERT INTO Sucursal VALUES (10, 'Almacén Central', 'Ciudad de México', 5551234567);
@@ -301,8 +237,7 @@ INSERT INTO Existencia VALUES (10013, 105, 10);
 INSERT INTO Existencia VALUES (10014, 115, 10);
 INSERT INTO Existencia VALUES (10015, 113, 10);
 INSERT INTO Existencia VALUES (10016, 103, 10);
-INSERT INTO Existencia VALUES (10017, 690, 10);
-INSERT INTO Existencia VALUES (10018, 950, 10);
+
 -- Sucursal Norte Monterrey (11)
 INSERT INTO Existencia VALUES (10001, 3, 11);
 INSERT INTO Existencia VALUES (10002, 2, 11);
@@ -313,8 +248,7 @@ INSERT INTO Existencia VALUES (10012, 4, 11);
 INSERT INTO Existencia VALUES (10013, 5, 11);
 INSERT INTO Existencia VALUES (10014, 3, 11);
 INSERT INTO Existencia VALUES (10016, 2, 11);
-INSERT INTO Existencia VALUES (10017, 15, 11);
-INSERT INTO Existencia VALUES (10018, 20, 11);
+
 -- Sucursal Sur Guadalajara (12)
 INSERT INTO Existencia VALUES (10003, 4, 12);
 INSERT INTO Existencia VALUES (10004, 5, 12);
@@ -324,7 +258,7 @@ INSERT INTO Existencia VALUES (10009, 4, 12);
 INSERT INTO Existencia VALUES (10011, 7, 12);
 INSERT INTO Existencia VALUES (10014, 4, 12);
 INSERT INTO Existencia VALUES (10015, 1, 12);
-INSERT INTO Existencia VALUES (10018, 10, 12);
+
 -- Sucursal Este Puebla (13)
 INSERT INTO Existencia VALUES (10001, 2, 13);
 INSERT INTO Existencia VALUES (10002, 5, 13);
@@ -333,8 +267,7 @@ INSERT INTO Existencia VALUES (10008, 2, 13);
 INSERT INTO Existencia VALUES (10009, 4, 13);
 INSERT INTO Existencia VALUES (10012, 1, 13);
 INSERT INTO Existencia VALUES (10016, 3, 13);
-INSERT INTO Existencia VALUES (10017, 15, 13);
-INSERT INTO Existencia VALUES (10018, 35, 13);
+
 -- Sucursal Oeste Tijuana (14)
 INSERT INTO Existencia VALUES (10001, 4, 14);
 INSERT INTO Existencia VALUES (10002, 6, 14);
@@ -343,8 +276,7 @@ INSERT INTO Existencia VALUES (10004, 7, 14);
 INSERT INTO Existencia VALUES (10005, 3, 14);
 INSERT INTO Existencia VALUES (10013, 5, 14);
 INSERT INTO Existencia VALUES (10015, 4, 14);
-INSERT INTO Existencia VALUES (10017, 23, 14);
-INSERT INTO Existencia VALUES (10018, 4, 14);
+
 -- Sucursal Centro León (15)
 INSERT INTO Existencia VALUES (10006, 5, 15);
 INSERT INTO Existencia VALUES (10007, 4, 15);
@@ -370,7 +302,7 @@ INSERT INTO Existencia VALUES (10007, 1, 17);
 INSERT INTO Existencia VALUES (10008, 5, 17);
 INSERT INTO Existencia VALUES (10009, 3, 17);
 INSERT INTO Existencia VALUES (10015, 5, 17);
-INSERT INTO Existencia VALUES (10018, 15, 17);
+
 -- Sucursal Golfo Veracruz (18) 
 INSERT INTO Existencia VALUES (10001, 6, 18);
 INSERT INTO Existencia VALUES (10008, 4, 18);
@@ -379,8 +311,7 @@ INSERT INTO Existencia VALUES (10010, 5, 18);
 INSERT INTO Existencia VALUES (10011, 1, 18);
 INSERT INTO Existencia VALUES (10013, 4, 18);
 INSERT INTO Existencia VALUES (10014, 2, 18);
-INSERT INTO Existencia VALUES (10017, 5, 18);
-INSERT INTO Existencia VALUES (10018, 17, 18);
+
 -- Sucursal Península Mérida (19)
 INSERT INTO Existencia VALUES (10006, 5, 19);
 INSERT INTO Existencia VALUES (10007, 3, 19);
@@ -404,56 +335,45 @@ INSERT INTO Existencia VALUES (10013, 3, 20);
 INSERT INTO Existencia VALUES (10014, 5, 20);
 INSERT INTO Existencia VALUES (10015, 1, 20);
 
---Pedido Especial
-INSERT INTO PedidoEspecial VALUES (1001, TO_DATE('2025-05-01', 'YYYY-MM-DD'), 2, 'Pendiente', 10007, 14, 101);
-INSERT INTO PedidoEspecial VALUES (1002, TO_DATE('2025-04-19', 'YYYY-MM-DD'), 1, 'Conseguido', 10012, 18, 102);
-INSERT INTO PedidoEspecial VALUES (1003, TO_DATE('2025-03-02', 'YYYY-MM-DD'), 5, 'No conseguido', 10003, 11, 110);
-INSERT INTO PedidoEspecial VALUES (1004, TO_DATE('2025-04-14', 'YYYY-MM-DD'), 3, 'Conseguido', 10009, 13, 104);
-INSERT INTO PedidoEspecial VALUES (1005, TO_DATE('2025-05-05', 'YYYY-MM-DD'), 4, 'Conseguido', 10005, 16, 103);
-INSERT INTO PedidoEspecial VALUES (1006, TO_DATE('2025-04-16', 'YYYY-MM-DD'), 2, 'Conseguido', 10006, 13, 102);
-INSERT INTO PedidoEspecial VALUES (1007, TO_DATE('2025-04-07', 'YYYY-MM-DD'), 1, 'Entregado', 10007, 15, 103);
 
 --Productos enviados
-INSERT INTO ProductosEnviados VALUES (10001, 5001, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10013, 5001, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10005, 5001, 1, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10007, 5002, 4, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10012, 5002, 10, 'Novedad', NULL);
-INSERT INTO ProductosEnviados VALUES (10002, 5003, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10009, 5003, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10017, 5003, 5, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10012, 5004, 10, 'Novedad', NULL);
-INSERT INTO ProductosEnviados VALUES (10016, 5004, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10003, 5005, 4, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10010, 5005, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10014, 5005, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10005, 5006, 18, ' ', 1005);
-INSERT INTO ProductosEnviados VALUES (10018, 5006, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10004, 5007, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10011, 5007, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10015, 5007, 1, ' ', NULL); 
-INSERT INTO ProductosEnviados VALUES (10006, 5008, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10012, 5008, 30, 'Novedad', 1002);
-INSERT INTO ProductosEnviados VALUES (10007, 5009, 5, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10012, 5009, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10016, 5009, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10012, 5010, 1, 'Novedad', NULL);
-INSERT INTO ProductosEnviados VALUES (10009, 5010, 15, ' ', 1004);
-INSERT INTO ProductosEnviados VALUES (10014, 5010, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10002, 5011, 4, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10010, 5011, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10017, 5011, 1, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10005, 5012, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10006, 5012, 15, ' ', 1006);
-INSERT INTO ProductosEnviados VALUES (10012, 5012, 10, 'Novedad', NULL);
-INSERT INTO ProductosEnviados VALUES (10003, 5013, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10009, 5013, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10015, 5013, 1, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10004, 5014, 2, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10012, 5014, 10, 'Novedad', NULL);
-INSERT INTO ProductosEnviados VALUES (10008, 5015, 5, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10013, 5015, 3, ' ', NULL);
-INSERT INTO ProductosEnviados VALUES (10016, 5015, 2, ' ', NULL);
+INSERT INTO ProductosEnviados VALUES (10001, 5001, 2);
+INSERT INTO ProductosEnviados VALUES (10013, 5001, 3);
+INSERT INTO ProductosEnviados VALUES (10005, 5001, 1);
+INSERT INTO ProductosEnviados VALUES (10007, 5002, 4);
+INSERT INTO ProductosEnviados VALUES (10012, 5002, 10);
+INSERT INTO ProductosEnviados VALUES (10002, 5003, 3);
+INSERT INTO ProductosEnviados VALUES (10009, 5003, 2);
+INSERT INTO ProductosEnviados VALUES (10012, 5004, 10);
+INSERT INTO ProductosEnviados VALUES (10016, 5004, 2);
+INSERT INTO ProductosEnviados VALUES (10003, 5005, 4);
+INSERT INTO ProductosEnviados VALUES (10010, 5005, 3);
+INSERT INTO ProductosEnviados VALUES (10014, 5005, 2);
+INSERT INTO ProductosEnviados VALUES (10005, 5006, 18);
+INSERT INTO ProductosEnviados VALUES (10004, 5007, 3);
+INSERT INTO ProductosEnviados VALUES (10011, 5007, 2);
+INSERT INTO ProductosEnviados VALUES (10015, 5007, 1); 
+INSERT INTO ProductosEnviados VALUES (10006, 5008, 2);
+INSERT INTO ProductosEnviados VALUES (10012, 5008, 30);
+INSERT INTO ProductosEnviados VALUES (10007, 5009, 5);
+INSERT INTO ProductosEnviados VALUES (10012, 5009, 3);
+INSERT INTO ProductosEnviados VALUES (10016, 5009, 2);
+INSERT INTO ProductosEnviados VALUES (10012, 5010, 1);
+INSERT INTO ProductosEnviados VALUES (10009, 5010, 15);
+INSERT INTO ProductosEnviados VALUES (10014, 5010, 2);
+INSERT INTO ProductosEnviados VALUES (10002, 5011, 4);
+INSERT INTO ProductosEnviados VALUES (10010, 5011, 3);
+INSERT INTO ProductosEnviados VALUES (10005, 5012, 2);
+INSERT INTO ProductosEnviados VALUES (10006, 5012, 15);
+INSERT INTO ProductosEnviados VALUES (10012, 5012, 10);
+INSERT INTO ProductosEnviados VALUES (10003, 5013, 3);
+INSERT INTO ProductosEnviados VALUES (10009, 5013, 2);
+INSERT INTO ProductosEnviados VALUES (10015, 5013, 1);
+INSERT INTO ProductosEnviados VALUES (10004, 5014, 2);
+INSERT INTO ProductosEnviados VALUES (10012, 5014, 10);
+INSERT INTO ProductosEnviados VALUES (10008, 5015, 5);
+INSERT INTO ProductosEnviados VALUES (10013, 5015, 3);
+INSERT INTO ProductosEnviados VALUES (10016, 5015, 2);
 
 -- Ventas
 INSERT INTO Venta VALUES (1, 350.75, TO_DATE('2025-04-05', 'YYYY-MM-DD'), 11);
@@ -505,8 +425,6 @@ INSERT INTO ProductoVendido VALUES (10013, 9, 1);
 INSERT INTO ProductoVendido VALUES (10014, 9, 1);
 INSERT INTO ProductoVendido VALUES (10015, 10, 1);
 INSERT INTO ProductoVendido VALUES (10016, 11, 1);
-INSERT INTO ProductoVendido VALUES (10017, 11, 1);
-INSERT INTO ProductoVendido VALUES (10018, 12, 1);
 INSERT INTO ProductoVendido VALUES (10001, 13, 2);
 INSERT INTO ProductoVendido VALUES (10003, 13, 1);
 INSERT INTO ProductoVendido VALUES (10002, 14, 1);
@@ -520,8 +438,6 @@ INSERT INTO ProductoVendido VALUES (10012, 19, 1);
 INSERT INTO ProductoVendido VALUES (10013, 19, 1);
 INSERT INTO ProductoVendido VALUES (10014, 20, 1);
 INSERT INTO ProductoVendido VALUES (10015, 21, 1);
-INSERT INTO ProductoVendido VALUES (10017, 21, 1);
-INSERT INTO ProductoVendido VALUES (10018, 22, 2);
 INSERT INTO ProductoVendido VALUES (10004, 23, 1);
 INSERT INTO ProductoVendido VALUES (10006, 23, 1);
 INSERT INTO ProductoVendido VALUES (10007, 24, 2);
@@ -531,8 +447,6 @@ INSERT INTO ProductoVendido VALUES (10011, 26, 1);
 INSERT INTO ProductoVendido VALUES (10014, 27, 1);
 INSERT INTO ProductoVendido VALUES (10015, 27, 1);
 INSERT INTO ProductoVendido VALUES (10016, 28, 2);
-INSERT INTO ProductoVendido VALUES (10017, 29, 1);
-INSERT INTO ProductoVendido VALUES (10018, 29, 1);
 INSERT INTO ProductoVendido VALUES (10003, 30, 1);
 -- Agregar URL a los libros, juegos de mesa y 
 ALTER TABLE Libro
