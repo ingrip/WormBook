@@ -1,0 +1,155 @@
+﻿@model WormBook.Models.Login
+
+@{
+    ViewData["Title"] = "Login";
+    // Detectar si es POST para mostrar formulario directamente tras el submit
+    var isPost = Context.Request.Method == "POST";
+}
+
+<style>
+    /* Tu CSS original */
+    body {
+        background: #fef6fb;
+        font-family: 'Comfortaa', cursive, 'Segoe UI', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        flex-direction: column; /* Para que el contenido no se superponga */
+    }
+
+    form {
+        background: #fff0f6;
+        padding: 40px 50px;
+        border-radius: 20px;
+        box-shadow: 0 15px 30px rgba(217, 108, 157, 0.25);
+        width: 360px;
+        transition: box-shadow 0.3s ease;
+    }
+
+        form:hover {
+            box-shadow: 0 20px 40px rgba(217, 108, 157, 0.35);
+        }
+
+    h2 {
+        color: #d96c9d;
+        text-align: center;
+        margin-bottom: 28px;
+        font-weight: 700;
+        letter-spacing: 1.2px;
+    }
+
+    label {
+        color: #b85a82;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+        width: 100%;
+        padding: 12px 18px;
+        margin-bottom: 24px;
+        border: 2px solid #f2d1e6;
+        border-radius: 12px;
+        background: #fffaff;
+        font-size: 1rem;
+        color: #6a3b58;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #d96c9d;
+            box-shadow: 0 0 8px #d96c9d;
+            outline: none;
+        }
+
+    input[type="submit"] {
+        background: #f7b5d4;
+        color: white;
+        padding: 12px;
+        border: none;
+        border-radius: 15px;
+        cursor: pointer;
+        width: 100%;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        transition: background 0.3s ease;
+        box-shadow: 0 6px 12px rgba(247, 181, 212, 0.5);
+    }
+
+        input[type="submit"]:hover {
+            background: #e68cb6;
+            box-shadow: 0 8px 16px rgba(230, 140, 182, 0.6);
+        }
+
+    /* Validation errors */
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: -18px;
+        margin-bottom: 12px;
+        display: block;
+    }
+</style>
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa&display=swap" rel="stylesheet" />
+</head>
+
+<!-- Mostrar selector SOLO si NO es POST -->
+@if (!isPost)
+{
+    <div id="selectorTipoUsuario" style="text-align:center; margin-top: 100px;">
+        <h2>¿Quién eres?</h2>
+        <button onclick="mostrarFormAdmin()" class="btn btn-secondary" style="margin: 10px; padding: 10px 20px;">Soy administrador</button>
+        <p style="margin-top: 15px; text-align: center;">
+            Soy Cliente
+            <a href="@Url.Action("Index", "Home", new { client = "true" })">Presiona aquí</a>
+
+        </p>
+
+    </div>
+}
+
+<form id="formLoginAdmin" asp-action="Login" method="post" novalidate
+      style="@(isPost ? "display:block;" : "display:none;") margin-top: 40px; max-width: 360px; margin-left:auto; margin-right:auto; background: #fff0f6; padding: 40px 50px; border-radius: 20px; box-shadow: 0 15px 30px rgba(217, 108, 157, 0.25);">
+    <h2>Iniciar Sesión Administrador</h2>
+
+    @if (!ViewData.ModelState.IsValid && isPost)
+    {
+        <div class="alert alert-danger" style="color: #d9534f; margin-bottom: 20px;">
+            @foreach (var error in ViewData.ModelState[string.Empty].Errors)
+            {
+                <p>@error.ErrorMessage</p>
+            }
+        </div>
+    }
+    <label asp-for="email">Email</label>
+    <input asp-for="email" type="email" placeholder="ejemplo@correo.com" required />
+    <span asp-validation-for="email" class="text-danger"></span>
+
+    <label asp-for="password">Contraseña</label>
+    <input asp-for="password" type="password" placeholder="••••••••" required minlength="6" />
+    <span asp-validation-for="password" class="text-danger"></span>
+
+    <input type="submit" value="Entrar" style="background: #f7b5d4; color: white; padding: 12px; border: none; border-radius: 15px; cursor: pointer; width: 100%; font-weight: 700; font-size: 1.1rem; letter-spacing: 1px; box-shadow: 0 6px 12px rgba(247, 181, 212, 0.5);" />
+
+    <p style="margin-top: 15px; text-align: center;">
+        ¿No tienes cuenta? <a href="@Url.Action("Register", "Login")">Regístrate aquí</a>
+    </p>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        function mostrarFormAdmin() {
+            document.getElementById("selectorTipoUsuario").style.display = "none";
+            document.getElementById("formLoginAdmin").style.display = "block";
+        }
+    </script>
+}

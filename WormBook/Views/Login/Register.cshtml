@@ -1,0 +1,80 @@
+﻿@model WormBook.Models.Login
+
+
+@{
+    ViewData["Title"] = "Registro";
+}
+
+@section Scripts {
+    <script>
+        // Si TempData["Message"] tiene valor, lo mostramos con alert
+        var message = '@TempData["Message"]';
+        if (message) {
+            alert(message);
+        }
+    </script>
+}
+
+<style>
+    body {
+        background: #fef6fb;
+        font-family: 'Segoe UI', sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    form {
+        background: #fff0f6;
+        padding: 30px 40px;
+        border-radius: 15px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        width: 350px;
+    }
+
+    h2 {
+        color: #d96c9d;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    input[type="text"], input[type="email"], input[type="password"] {
+        width: 100%;
+        padding: 10px 15px;
+        margin: 8px 0 20px 0;
+        border: 1px solid #f2d1e6;
+        border-radius: 8px;
+        background: #fffaff;
+    }
+
+    input[type="submit"] {
+        background: #f7b5d4;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 100%;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        input[type="submit"]:hover {
+            background: #e68cb6;
+        }
+
+</style>
+
+<form asp-action="RegisterRegistro" method="post">
+    <h2>Registrarse</h2>
+
+    <label>Email</label>
+    <input asp-for="email" type="email" required />
+
+    <label>Contraseña</label>
+    <input asp-for="password" type="password" required />
+
+
+    <input type="submit" value="Crear Cuenta" />
+</form>

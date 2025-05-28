@@ -9,6 +9,8 @@ builder.Services.AddControllersWithViews();
 // Agregar el DbContext con Oracle
 builder.Services.AddDbContext<MiContexto>(options =>
     options.UseOracle(builder.Configuration.GetConnectionString("MiConexionOracle")));
+builder.Services.AddSession();
+builder.Services.AddHttpContextAccessor(); // necesario para @inject
 
 // Otros servicios...
 builder.Services.AddControllers();
@@ -28,6 +30,7 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+app.UseSession();
 
 app.MapControllers();
 app.Run();
