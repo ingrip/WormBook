@@ -8,10 +8,7 @@ DROP TABLE  libro   CASCADE CONSTRAINTS;
 DROP TABLE  pedidoespecial            CASCADE CONSTRAINTS;
 DROP TABLE  producto             CASCADE CONSTRAINTS;
 DROP TABLE  productosenviados           CASCADE CONSTRAINTS;
-DROP TABLE  repodetalles                CASCADE CONSTRAINTS;
-DROP TABLE  repopedido                CASCADE CONSTRAINTS;
 DROP TABLE  sucursal   CASCADE CONSTRAINTS;
-DROP TABLE  tarjetaregalo            CASCADE CONSTRAINTS;
 DROP TABLE  venta            CASCADE CONSTRAINTS;
 DROP TABLE  productovendido            CASCADE CONSTRAINTS;
 
@@ -118,26 +115,6 @@ CREATE TABLE ProductoVendido
 ALTER TABLE ProductoVendido
 	ADD CONSTRAINT  PK_ProductoVendido PRIMARY KEY (CodigoInterno,NumVenta);
 
-CREATE TABLE RepoDetalles
-(
-	CodigoInterno        INTEGER NOT NULL,
-	NumRepo              INTEGER NOT NULL,
-	Cantidad       INTEGER NOT NULL
-);
-
-ALTER TABLE RepoDetalles
-	ADD CONSTRAINT  PK_RepoDetalles PRIMARY KEY (CodigoInterno,NumRepo);
-
-CREATE TABLE RepoPedido
-(
-	NumRepo              INTEGER NOT NULL,
-	CodigoSucursal       INTEGER NOT NULL,
-	FechaPedido          DATE NOT NULL 
-);
-
-ALTER TABLE RepoPedido
-	ADD CONSTRAINT  PK_RepoPedido PRIMARY KEY (NumRepo);
-
 CREATE TABLE Sucursal
 (
 	CodigoSucursal       INTEGER NOT NULL,
@@ -148,15 +125,6 @@ CREATE TABLE Sucursal
 
 ALTER TABLE Sucursal
 	ADD CONSTRAINT  PK_Sucursal PRIMARY KEY (CodigoSucursal);
-
-CREATE TABLE TarjetaRegalo
-(
-	CodigoInterno        INTEGER NOT NULL ,
-	Saldo                INTEGER NOT NULL 
-);
-
-ALTER TABLE TarjetaRegalo
-	ADD CONSTRAINT  PK_TarjetaRegalo PRIMARY KEY (CodigoInterno);
 
 CREATE TABLE Venta
 (
@@ -211,18 +179,6 @@ ALTER TABLE ProductoVendido
 ALTER TABLE ProductoVendido
 	ADD (CONSTRAINT R_11 FOREIGN KEY (NumVenta) REFERENCES Venta (NumVenta));
 
-ALTER TABLE RepoDetalles
-	ADD (CONSTRAINT R_29 FOREIGN KEY (NumRepo) REFERENCES RepoPedido (NumRepo));
-
-ALTER TABLE RepoDetalles
-	ADD (CONSTRAINT R_35 FOREIGN KEY (CodigoInterno) REFERENCES Producto (CodigoInterno));
-
-ALTER TABLE RepoPedido
-	ADD (CONSTRAINT R_36 FOREIGN KEY (CodigoSucursal) REFERENCES Sucursal (CodigoSucursal));
-
-ALTER TABLE TarjetaRegalo
-	ADD (FOREIGN KEY (CodigoInterno) REFERENCES Producto(CodigoInterno) ON DELETE CASCADE);
-
 ALTER TABLE Venta
 	ADD (CONSTRAINT R_26 FOREIGN KEY (CodigoSucursal) REFERENCES Sucursal (CodigoSucursal));
 
@@ -230,7 +186,6 @@ ALTER TABLE Existencia DROP CONSTRAINT R_9;
 ALTER TABLE PedidoEspecial DROP CONSTRAINT R_32;
 ALTER TABLE ProductosEnviados DROP CONSTRAINT R_12;
 ALTER TABLE ProductoVendido DROP CONSTRAINT R_10;
-ALTER TABLE RepoDetalles DROP CONSTRAINT R_35;
 
 ALTER TABLE Existencia
     ADD CONSTRAINT R_9 FOREIGN KEY (CodigoInterno) 
@@ -247,11 +202,6 @@ ALTER TABLE ProductosEnviados
 ALTER TABLE ProductoVendido
     ADD CONSTRAINT R_10 FOREIGN KEY (CodigoInterno) 
     REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
-
-ALTER TABLE RepoDetalles
-    ADD CONSTRAINT R_35 FOREIGN KEY (CodigoInterno) 
-    REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
-
 
 
 --Clientes
@@ -315,12 +265,6 @@ INSERT INTO JuegoMesa VALUES (10013, 'Monopoly Clásico', 'Hasbro');
 INSERT INTO JuegoMesa VALUES (10014, 'Ajedrez de Mármol', 'Games Collection');
 INSERT INTO JuegoMesa VALUES (10015, 'Catan Edición Especial', 'Devir');
 INSERT INTO JuegoMesa VALUES (10016, 'Scrabble Deluxe', 'Mattel');
-
--- Tarjetas de regalo
-INSERT INTO Producto VALUES (10017, 500, 123456789);
-INSERT INTO Producto VALUES (10018, 350, 987654321);
-INSERT INTO TarjetaRegalo VALUES (10017, 500);
-INSERT INTO TarjetaRegalo VALUES (10018, 350);
 
 --Envios
 INSERT INTO Envio VALUES (5001, 3, 10, 11);
@@ -511,65 +455,6 @@ INSERT INTO ProductosEnviados VALUES (10008, 5015, 5, ' ', NULL);
 INSERT INTO ProductosEnviados VALUES (10013, 5015, 3, ' ', NULL);
 INSERT INTO ProductosEnviados VALUES (10016, 5015, 2, ' ', NULL);
 
---Repo pedido
-INSERT INTO RepoPedido VALUES (101, 11, TO_DATE('2025-05-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (102, 12, TO_DATE('2025-04-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (103, 13, TO_DATE('2025-03-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (104, 14, TO_DATE('2025-05-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (105, 15, TO_DATE('2025-04-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (106, 16, TO_DATE('2025-03-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (107, 17, TO_DATE('2025-03-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (108, 18, TO_DATE('2025-02-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (109, 19, TO_DATE('2025-01-05', 'YYYY-MM-DD'));
-INSERT INTO RepoPedido VALUES (110, 20, TO_DATE('2025-02-05', 'YYYY-MM-DD'));
-
---Repo detalles 
-INSERT INTO RepoDetalles VALUES (10001, 101, 4);
-INSERT INTO RepoDetalles VALUES (10002, 101, 2);
-INSERT INTO RepoDetalles VALUES (10003, 101, 1);
-INSERT INTO RepoDetalles VALUES (10004, 102, 3);
-INSERT INTO RepoDetalles VALUES (10005, 102, 2);
-INSERT INTO RepoDetalles VALUES (10006, 102, 0);
-INSERT INTO RepoDetalles VALUES (10007, 102, 5);
-INSERT INTO RepoDetalles VALUES (10008, 103, 3);
-INSERT INTO RepoDetalles VALUES (10009, 103, 1);
-INSERT INTO RepoDetalles VALUES (10010, 103, 0);
-INSERT INTO RepoDetalles VALUES (10011, 103, 2);
-INSERT INTO RepoDetalles VALUES (10001, 103, 4);
-INSERT INTO RepoDetalles VALUES (10002, 104, 3);
-INSERT INTO RepoDetalles VALUES (10003, 104, 2);
-INSERT INTO RepoDetalles VALUES (10004, 104, 1);
-INSERT INTO RepoDetalles VALUES (10005, 104, 4);
-INSERT INTO RepoDetalles VALUES (10006, 104, 0);
-INSERT INTO RepoDetalles VALUES (10007, 104, 2);
-INSERT INTO RepoDetalles VALUES (10008, 105, 1);
-INSERT INTO RepoDetalles VALUES (10009, 105, 3);
-INSERT INTO RepoDetalles VALUES (10010, 105, 5);
-INSERT INTO RepoDetalles VALUES (10011, 105, 2);
-INSERT INTO RepoDetalles VALUES (10001, 106, 0);
-INSERT INTO RepoDetalles VALUES (10002, 106, 3);
-INSERT INTO RepoDetalles VALUES (10003, 106, 4);
-INSERT INTO RepoDetalles VALUES (10004, 107, 2);
-INSERT INTO RepoDetalles VALUES (10005, 107, 1);
-INSERT INTO RepoDetalles VALUES (10006, 107, 5);
-INSERT INTO RepoDetalles VALUES (10007, 107, 3);
-INSERT INTO RepoDetalles VALUES (10008, 107, 2);
-INSERT INTO RepoDetalles VALUES (10009, 107, 0);
-INSERT INTO RepoDetalles VALUES (10010, 108, 4);
-INSERT INTO RepoDetalles VALUES (10011, 108, 1);
-INSERT INTO RepoDetalles VALUES (10001, 108, 0);
-INSERT INTO RepoDetalles VALUES (10002, 108, 2);
-INSERT INTO RepoDetalles VALUES (10003, 108, 3);
-INSERT INTO RepoDetalles VALUES (10004, 109, 4);
-INSERT INTO RepoDetalles VALUES (10005, 109, 2);
-INSERT INTO RepoDetalles VALUES (10006, 109, 1);
-INSERT INTO RepoDetalles VALUES (10007, 110, 2);
-INSERT INTO RepoDetalles VALUES (10008, 110, 0);
-INSERT INTO RepoDetalles VALUES (10009, 110, 3);
-INSERT INTO RepoDetalles VALUES (10010, 110, 5);
-INSERT INTO RepoDetalles VALUES (10011, 110, 1);
-INSERT INTO RepoDetalles VALUES (10001, 110, 4);
-
 -- Ventas
 INSERT INTO Venta VALUES (1, 350.75, TO_DATE('2025-04-05', 'YYYY-MM-DD'), 11);
 INSERT INTO Venta VALUES (2, 420.00, TO_DATE('2025-04-12', 'YYYY-MM-DD'), 11);
@@ -649,14 +534,11 @@ INSERT INTO ProductoVendido VALUES (10016, 28, 2);
 INSERT INTO ProductoVendido VALUES (10017, 29, 1);
 INSERT INTO ProductoVendido VALUES (10018, 29, 1);
 INSERT INTO ProductoVendido VALUES (10003, 30, 1);
--- Agregar URL a los libros, juegos de mesa y tarjetas 
+-- Agregar URL a los libros, juegos de mesa y 
 ALTER TABLE Libro
 ADD URL VARCHAR2(255);
 
 ALTER TABLE JuegoMesa
-ADD URL VARCHAR2(255);
-
-ALTER TABLE TarjetaRegalo
 ADD URL VARCHAR2(255);
 
 UPDATE Libro SET URL = 'https://m.media-amazon.com/images/I/6197NHIuvAL._AC_UF894,1000_QL80_.jpg' WHERE CodigoInterno = 10001;
@@ -675,5 +557,3 @@ UPDATE JuegoMesa SET URL = 'https://assets.infinitygamingtable.com/assets/GameIc
 UPDATE JuegoMesa SET URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTd4T-ADLQnEGO9xBnXpiujhnu1EqYjqSCUCw&s' WHERE CodigoInterno = 10014;
 UPDATE JuegoMesa SET URL = 'https://m.media-amazon.com/images/I/71xfEOIdUWL.jpg' WHERE CodigoInterno = 10015;
 UPDATE JuegoMesa SET URL = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRKDN7AVq6inthCJLTNJQMJFjJm4JUGroYMJA&s' WHERE CodigoInterno = 10016;
-UPDATE TarjetaRegalo SET URL = 'https://media.istockphoto.com/id/1361203739/es/vector/icono-de-tarjeta-de-regalo-en-estilo-plano-ilustraci%C3%B3n-vectorial-de-cup%C3%B3n-de-descuento-en.jpg?s=612x612&w=0&k=20&c=1HMoUK12jCLUKXFLHSzwODJXLxMPXCaHLboTz0Mn6lo=' WHERE CodigoInterno = 10017;
-UPDATE TarjetaRegalo SET URL = 'https://media.istockphoto.com/id/1361203739/es/vector/icono-de-tarjeta-de-regalo-en-estilo-plano-ilustraci%C3%B3n-vectorial-de-cup%C3%B3n-de-descuento-en.jpg?s=612x612&w=0&k=20&c=1HMoUK12jCLUKXFLHSzwODJXLxMPXCaHLboTz0Mn6lo=' WHERE CodigoInterno = 10018;
