@@ -1,0 +1,75 @@
+﻿@model List<WormBook.Models.Productosenviado>
+
+@{
+    ViewData["Title"] = "Productos Enviados";
+}
+<style>
+    body {
+        background-color: #f3f4f6;
+    }
+
+    .card {
+        border: none;
+        border-radius: 15px;
+        background: #ffffff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-body {
+        background-color: #e7f0ff;
+        border-radius: 15px;
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        color: #003366;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+
+    .card-text {
+        color: #333;
+    }
+
+    h2 {
+        color: #4169e1;
+        font-weight: bold;
+    }
+</style>
+
+<div class="container py-5">
+    <h2 class="mb-4 text-primary">📦 Productos Enviados</h2>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title text-dark">
+                            @(
+                                item.CodigoInternoNavigation.Libro?.Titulo ??
+                                item.CodigoInternoNavigation.Juegomesa?.Nombre ??
+                                "Producto sin título"
+                                )
+                        </h5>
+                        <p class="card-text"><strong>Código Interno:</strong> @item.CodigoInterno</p>
+                        <p class="card-text"><strong>Cantidad Enviada:</strong> @item.Cantidadenviada</p>
+                        <p class="card-text"><strong>Guía de Envío:</strong> #@item.Guiaenvio</p>
+                        <p class="card-text">
+                            <strong>Destino:</strong>
+                            @(item.GuiaenvioNavigation?.Destino ?? "Destino no especificado")
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,32 @@
+﻿@model IEnumerable<WormBook.Models.Productovendido>
+
+@{
+    ViewData["Title"] = "Productos Vendidos";
+}
+
+<h2 class="mb-4">Productos Vendidos</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        @(item.CodigoInternoNavigation.Libro?.Titulo ?? item.CodigoInternoNavigation.Juegomesa?.Nombre)
+                    </h5>
+
+                    <p><strong>Código Interno:</strong> @item.CodigoInterno</p>
+
+                    <p><strong>Existencias por Sucursal:</strong></p>
+                    <ul>
+                        @foreach (var existencia in item.CodigoInternoNavigation.Existencia)
+                        {
+                            <li>@existencia.CodigosucursalNavigation.Nombresucursal: @existencia.Existencia</li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+    }
+</div>

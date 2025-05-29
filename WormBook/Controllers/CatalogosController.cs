@@ -47,6 +47,7 @@ namespace WormBook.Controllers
         public async Task<IActionResult> ListaProductosEnviados()
         {
             ViewData["IsLoggedIn"] = User.Identity.IsAuthenticated;
+
             var pe = await _context.Productosenviados
                 .Include(j => j.CodigoInternoNavigation)
                 .ThenInclude(p => p.Existencia)
@@ -55,6 +56,8 @@ namespace WormBook.Controllers
 
             return View(pe);
         }
+
+
         public async Task<IActionResult> ListaProductosVendidos()
         {
             ViewData["IsLoggedIn"] = User.Identity.IsAuthenticated;
@@ -69,14 +72,15 @@ namespace WormBook.Controllers
         public async Task<IActionResult> ListaVenta()
         {
             ViewData["IsLoggedIn"] = User.Identity.IsAuthenticated;
+
             var ventas = await _context.Venta
-                .Include(j => j.Productovendidos)
-                .ThenInclude(e => e.CodigosucursalNavigation)
+                .Include(v => v.Productovendidos)
+                    .ThenInclude(pv => pv.CodigoInternoNavigation)
+                .Include(v => v.CodigosucursalNavigation) // <--- AQUÍ ESTÁ LA CLAVE
                 .ToListAsync();
-
-
 
             return View(ventas);
         }
+
     }
 }

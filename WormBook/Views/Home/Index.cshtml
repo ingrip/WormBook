@@ -7,8 +7,10 @@
     @if (isLoggedIn)
     {
         <div class="container py-5">
-            <h2 class="mb-4 text-primary">Panel de Administración</h2>
+            <h2 class="mb-4 text-primary">📊 Panel de Administración</h2>
             <div class="row justify-content-center">
+
+                <!-- Libros -->
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow" style="cursor:pointer;" onclick="window.location.href='@Url.Action("Index", "Libros")'">
                         <div class="card-body">
@@ -20,6 +22,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Juegos de Mesa -->
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow" style="cursor:pointer;" onclick="window.location.href='@Url.Action("Index", "JuegosMesa")'">
                         <div class="card-body">
@@ -31,6 +35,8 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Envíos -->
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow" style="cursor:pointer;" onclick="window.location.href='@Url.Action("Index", "Envios")'">
                         <div class="card-body">
@@ -42,8 +48,49 @@
                         </div>
                     </div>
                 </div>
+
+                <!-- Productos Enviados -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow" style="cursor:pointer;" onclick="window.location.href='@Url.Action("ListaProductosEnviados", "Catalogos")'">
+                        <div class="card-body">
+                            <h5 class="card-title text-info"><i class="bi bi-box-seam"></i> Productos Enviados</h5>
+                            <p class="card-text">Ver historial de productos enviados a sucursales.</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 text-end">
+                            <a href="@Url.Action("ListaProductosEnviados", "Catalogos")" class="btn btn-outline-info btn-sm">Ir</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Productos Vendidos -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow" style="cursor:pointer;" onclick="window.location.href='@Url.Action("ListaProductosVendidos", "Catalogos")'">
+                        <div class="card-body">
+                            <h5 class="card-title text-danger"><i class="bi bi-cart-check"></i> Productos Vendidos</h5>
+                            <p class="card-text">Consulta de productos vendidos por sucursal.</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 text-end">
+                            <a href="@Url.Action("ListaProductosVendidos", "Catalogos")" class="btn btn-outline-danger btn-sm">Ir</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ventas -->
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow" style="cursor:pointer;" onclick="window.location.href='@Url.Action("ListaVenta", "Catalogos")'">
+                        <div class="card-body">
+                            <h5 class="card-title text-secondary"><i class="bi bi-receipt"></i> Ventas</h5>
+                            <p class="card-text">Historial de ventas agrupadas por ticket o folio.</p>
+                        </div>
+                        <div class="card-footer bg-transparent border-top-0 text-end">
+                            <a href="@Url.Action("ListaVenta", "Catalogos")" class="btn btn-outline-secondary btn-sm">Ir</a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
+
     }
     else
     {

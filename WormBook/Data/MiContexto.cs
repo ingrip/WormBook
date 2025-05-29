@@ -269,17 +269,24 @@ public partial class MiContexto : DbContext
             entity.Property(e => e.CodigoInterno)
                 .HasPrecision(10)
                 .HasColumnName("CODIGOINTERNO");
+
             entity.Property(e => e.Guiaenvio)
                 .HasPrecision(10)
                 .HasColumnName("GUIAENVIO");
+
             entity.Property(e => e.Cantidadenviada)
                 .HasPrecision(10)
                 .HasColumnName("CANTIDADENVIADA");
 
-            entity.HasOne(d => d.CodigoInternoNavigation).WithMany(p => p.Productosenviados)
+            entity.HasOne(d => d.CodigoInternoNavigation)
+                .WithMany(p => p.Productosenviados)
                 .HasForeignKey(d => d.CodigoInterno)
                 .HasConstraintName("FK_PRODUCTOSENVIADOS_PRODUCTO");
 
+            entity.HasOne(d => d.GuiaenvioNavigation)
+                .WithMany() 
+                .HasForeignKey(d => d.Guiaenvio)
+                .HasConstraintName("FK_PRODUCTOSENVIADOS_ENVIO");
         });
 
         modelBuilder.Entity<Productovendido>(entity =>
