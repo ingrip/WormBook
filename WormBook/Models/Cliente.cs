@@ -5,7 +5,7 @@ namespace WormBook.Models;
 
 public partial class Cliente
 {
-    public int Telefono { get; set; }
+    public long Telefono { get; set; }
 
     public required string Nombre { get; set; }
 

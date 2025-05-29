@@ -15,26 +15,18 @@
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-            </div>
+                  </div>
             <div class="carousel-inner">
-                <div class="carousel-item active" data-bs-interval="10000" style="cursor:pointer;"
-                     onclick="window.location.href='@Url.Action("Privacy", "Home")'">
-                    <img src="img/PedirLIbro.gif" class="d-block w-100" alt="Pedir Libro" />
-                    <div class="carousel-caption d-none d-md-block">
-                        <h5>Pedir un libro</h5>
-                        <p>¿No encuentras un libro? Pídelo con nosotros.</p>
-                    </div>
-                </div>
-                <div class="carousel-item" data-bs-interval="2000" style="cursor:pointer;"
-                     onclick="window.location.href='@Url.Action("BuyBooks", "Books")'">
+
+                <div class="carousel-item active" data-bs-interval="1000" style="cursor:pointer;"
+                     onclick="window.location.href='@Url.Action("ComprasLibro", "Compras")'">
                     <img src="img/ComprarLibro.gif" class="d-block w-100" alt="Comprar Libro" />
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Comprar un libro</h5>
                         <p>Explora nuestra variedad y compra tu favorito con nosotros.</p>
                     </div>
                 </div>
-                <div class="carousel-item" style="cursor:pointer;"
+                <div class="carousel-item" style="cursor:pointer;" data-bs-interval="1000"
                      onclick="window.location.href='@Url.Action("ComprasJuegosMesa", "Compras")'">
                     <img src="img/Juegosdemesa.png" class="d-block w-100" alt="Juegos de mesa" />
                     <div class="carousel-caption d-none d-md-block">

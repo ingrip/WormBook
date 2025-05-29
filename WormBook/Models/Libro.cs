@@ -16,4 +16,7 @@ public partial class Libro
     public string? Editorial { get; set; }
 
     public virtual Producto CodigoInternoNavigation { get; set; } = null!;
+
+    public string URL { get; set; } = null!;
+
 }

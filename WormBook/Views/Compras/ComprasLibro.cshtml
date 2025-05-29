@@ -1,5 +1,347 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿@model IEnumerable<WormBook.Models.Libro>
 @{
+    ViewData["Title"] = "Catálogo de Libros";
+    Layout = "_PublicLayout";
 }
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f5f7fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+            }
+
+        .card-title {
+            font-weight: 700;
+            color: #343a40;
+        }
+
+        .btn-primary {
+            background-color: #4a90e2;
+            border: none;
+        }
+
+            .btn-primary:hover {
+                background-color: #357abd;
+            }
+
+        #alert-global {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 1055;
+            min-width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="alert-global"></div>
+
+    <div class="container py-5">
+        <h1 class="text-center mb-5 text-primary display-4">📚 Catálogo de Libros</h1>
+
+        <div class="row justify-content-center">
+            @foreach (var libro in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center">
+                        <img src="@(libro.URL ?? "https://via.placeholder.com/300x200?text=Libro")" class="card-img-top" alt="@libro.Titulo" />
+                        <div class="card-body d-flex flex-column">
+                            <h4 class="card-title">@libro.Titulo</h4>
+                            <p class="text-muted mb-1">@libro.Autor</p>
+                            <p class="mb-1"><strong>Editorial:</strong> @libro.Editorial</p>
+                            <p class="mb-1"><strong>ISBN:</strong> @libro.Isbn</p>
+                            <p class="mb-1"><strong>Código:</strong> @libro.CodigoInterno</p>
+                            <p class="mb-3">
+                                <strong>Existencia total:</strong>
+                                @{
+                                    int existenciaTotal = 0;
+                                    if (libro.CodigoInternoNavigation?.Existencia != null)
+                                    {
+                                        foreach (var existencia in libro.CodigoInternoNavigation.Existencia)
+                                        {
+                                            existenciaTotal += existencia.Existencia;
+                                        }
+                                    }
+                                }
+                                @existenciaTotal
+                            </p>
+
+                            <label for="sucursal_@libro.CodigoInterno" class="form-label">Seleccionar sucursal</label>
+                            <select id="sucursal_@libro.CodigoInterno" class="form-select mb-2 sucursal-select" data-libro-id="@libro.CodigoInterno">
+                                <option selected disabled>Selecciona una sucursal...</option>
+                                @foreach (var sucursal in ViewBag.Sucursales)
+                                {
+                                    <option value="@sucursal.Codigo">@sucursal.Nombre</option>
+                                }
+                            </select>
+
+                            <div id="alerta_@libro.CodigoInterno"></div>
+
+                            <button class="btn btn-primary w-100 comprar-btn" data-libro-id="@libro.CodigoInterno" disabled>
+                                <i class="bi bi-cart-plus"></i> Comprar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Modal de compra -->
+    <div class="modal fade" id="modalCompra" tabindex="-1" aria-labelledby="modalCompraLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header" style="background-color: #a3c4f3;">
+                    <h5 class="modal-title text-white" id="modalCompraLabel">Confirmar compra</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+
+                <!-- Body -->
+                <div class="modal-body">
+                    <div id="infoLibroSeleccionado" class="mb-4">
+                        <!-- Aquí irá info del juego -->
+                    </div>
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="cantidadCompra" class="form-label text-secondary">Cantidad</label>
+                            <input type="number" id="cantidadCompra" class="form-control" value="1" min="1" max="99" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label text-secondary">Nombre</label>
+                            <input type="text" id="nombre" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="apellido" class="form-label text-secondary">Apellido</label>
+                            <input type="text" id="apellido" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telefono" class="form-label text-secondary">Teléfono</label>
+                            <input type="text" id="telefono" class="form-control" placeholder="Ej. 5512345678" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="destino" class="form-label text-secondary">Destino</label>
+                            <input type="text" id="destino" class="form-control" placeholder="Dirección de envío" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="metodoPago" class="form-label text-secondary">Método de pago</label>
+                            <select class="form-select" id="metodoPago">
+                                <option value="" disabled selected>Selecciona un método de pago</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="paypal">PayPal</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Tarjeta -->
+                    <div id="camposTarjeta" class="d-none mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Nombre del titular</label>
+                                <input type="text" class="form-control" placeholder="Nombre completo">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Número de tarjeta</label>
+                                <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Fecha de vencimiento</label>
+                                <input type="month" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">CVV</label>
+                                <input type="text" class="form-control" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PayPal -->
+                    <div id="camposPayPal" class="d-none mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Correo de PayPal</label>
+                                <input type="email" class="form-control" placeholder="email@paypal.com">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-success">Confirmar compra</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(function () {
+            function mostrarAlerta(mensaje, tipo = "success", duracion = 3000) {
+                const alerta = $(`
+                    <div class="alert alert-${tipo} alert-dismissible fade show" role="alert">
+                        ${mensaje}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                    </div>`);
+                $("#alert-global").append(alerta);
+                setTimeout(() => alerta.alert('close'), duracion);
+            }
+
+            $('.sucursal-select').on('change', function () {
+                const libroId = $(this).data('libro-id');
+                const sucursalCodigo = $(this).val();
+                const alertaDiv = $(`#alerta_${libroId}`);
+                const botonComprar = $(`.comprar-btn[data-libro-id='${libroId}']`);
+
+                alertaDiv.html('');
+                botonComprar.prop('disabled', true);
+
+                if (!sucursalCodigo) return;
+
+                $.ajax({
+                    url: '@Url.Action("ComprarLibro", "Compras")',
+                    method: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ LibroId: libroId, CodigoSucursal: sucursalCodigo }),
+                    headers: { "X-Validation-Only": "true" },
+                    success: function (response) {
+                        if (response.success) {
+                            alertaDiv.html('<div class="alert alert-success p-2 mb-2">Stock disponible</div>');
+                            botonComprar.prop('disabled', false);
+                        } else {
+                            alertaDiv.html('<div class="alert alert-warning p-2 mb-2">Stock insuficiente</div>');
+                            botonComprar.prop('disabled', true);
+                        }
+                    },
+
+                    error: function () {
+                        alertaDiv.html('<div class="alert alert-danger p-2 mb-2">Error al validar stock</div>');
+                        botonComprar.prop('disabled', true);
+                    }
+                });
+            });
+
+            $(document).on('click', '.comprar-btn', function () {
+                const libroId = $(this).data('libro-id');
+                const sucursalCodigo = $(`#sucursal_${libroId}`).val();
+                const sucursalTexto = $(`#sucursal_${libroId} option:selected`).text();
+
+                if (!sucursalCodigo) {
+                    mostrarAlerta('Selecciona una sucursal antes de comprar', 'danger');
+                    return;
+                }
+
+                const card = $(this).closest('.card');
+                const titulo = card.find('.card-title').text();
+                const autor = card.find('p.text-muted').text();
+                const codigo = card.find('p:contains("Código")').text();
+                const existencia = card.find('p:contains("Existencia total")').text();
+                const imgSrc = card.find('img').attr('src');
+
+                $('#infoLibroSeleccionado').html(`
+                    <div class="row">
+                        <div class="col-md-4 text-center mb-3">
+                            <img src="${imgSrc}" alt="${titulo}" class="img-fluid rounded">
+                        </div>
+                        <div class="col-md-8">
+                            <h4>${titulo}</h4>
+                            <p><strong>Autor:</strong> ${autor}</p>
+                            <p>${codigo}</p>
+                            <p>${existencia}</p>
+                            <p><strong>Sucursal:</strong> ${sucursalTexto}</p>
+                        </div>
+                    </div>
+                `);
+
+                $('#metodoPago').val('');
+                $('#camposTarjeta, #camposPayPal').addClass('d-none');
+                $('#numeroTarjeta, #cvvTarjeta, #fechaExpiracion, #emailPayPal').val('');
+                $('#cantidadCompra').val(1);
+
+                $('#modalCompra').data('libro-id', libroId);
+                $('#modalCompra').data('sucursal-codigo', sucursalCodigo);
+
+                const modal = new bootstrap.Modal(document.getElementById('modalCompra'));
+                modal.show();
+            });
+
+            $('#metodoPago').on('change', function () {
+                const metodo = $(this).val();
+                $('#camposTarjeta, #camposPayPal').addClass('d-none');
+                if (metodo === 'tarjeta') {
+                    $('#camposTarjeta').removeClass('d-none');
+                } else if (metodo === 'paypal') {
+                    $('#camposPayPal').removeClass('d-none');
+                }
+            });
+
+            $('.btn-success').on('click', function () {
+            const libroId = $('#modalCompra').data('libro-id');
+            const sucursalCodigo = $('#modalCompra').data('sucursal-codigo');
+            const cantidad = parseInt($('#cantidadCompra').val()) || 1;
+            const metodoPago = $('#metodoPago').val();
+
+            const nombre = $('#nombre').val();
+            const apellido = $('#apellido').val();
+            const telefono = $('#telefono').val();
+            const destino = $('#destino').val();
+
+            // Validación de campos obligatorios
+            if (!nombre || !apellido || !telefono || !destino) {
+                mostrarAlerta('Por favor, completa todos los campos requeridos.', 'danger', 3000);
+                return;
+            }
+
+            const compraData = {
+                LibroId: libroId,
+                CodigoSucursal: sucursalCodigo,
+                Cantidad: cantidad,
+                MetodoPago: metodoPago,
+                Nombre: nombre,
+                Apellido: apellido,
+                Telefono: telefono,
+                Destino: destino
+            };
+
+            $.ajax({
+                url: '@Url.Action("ComprarLibro", "Compras")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(compraData),
+                success: function () {
+                    mostrarAlerta('Compra realizada con éxito!', 'success', 3000);
+                    const modalEl = document.getElementById('modalCompra');
+                    const modal = bootstrap.Modal.getInstance(modalEl);
+                    modal.hide();
+                    location.reload();
+                },
+                error: function () {
+                    mostrarAlerta('Error al realizar la compra', 'danger', 3000);
+                }
+            });
+        });
+        });
+
+    </script>
+</body>
+</html>

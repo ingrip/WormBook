@@ -87,6 +87,43 @@
         .form-label {
             font-weight: bold;
         }
+
+        .modal-content {
+            border-radius: 12px;
+            background-color: #fffaf5;
+        }
+
+        .modal-header {
+            background-color: #a3c4f3;
+        }
+
+        .modal-footer {
+            background-color: #f0e5de;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #5c5f66;
+        }
+
+        .btn-outline-success {
+            background-color: #c1f0dc;
+            border: none;
+        }
+
+            .btn-outline-success:hover {
+                background-color: #a0e6c2;
+            }
+
+        .btn-outline-secondary {
+            background-color: #e2e2f0;
+            border: none;
+        }
+
+            .btn-outline-secondary:hover {
+                background-color: #cacadb;
+            }
+
     </style>
 </head>
 <body>
@@ -150,67 +187,83 @@
     <div class="modal fade" id="modalCompra" tabindex="-1" aria-labelledby="modalCompraLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content shadow-lg">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title" id="modalCompraLabel">Confirmar compra</h5>
+                <div class="modal-header" style="background-color: #a3c4f3;">
+                    <h5 class="modal-title text-white" id="modalCompraLabel">Confirmar compra</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
                 </div>
+
+                <!-- Body -->
                 <div class="modal-body">
                     <div id="infoJuegoSeleccionado" class="mb-4">
                         <!-- Aquí irá info del juego -->
                     </div>
-                    <div class="mb-3">
-                        <label for="cantidadCompra" class="form-label">Cantidad a comprar</label>
-                        <input type="number" id="cantidadCompra" class="form-control" value="1" min="1" max="99" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="cantidadCompra" class="form-label text-secondary">Cantidad</label>
+                            <input type="number" id="cantidadCompra" class="form-control" value="1" min="1" max="99" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="nombre" class="form-label text-secondary">Nombre</label>
+                            <input type="text" id="nombre" class="form-control" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="apellido" class="form-label text-secondary">Apellido</label>
+                            <input type="text" id="apellido" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="telefono" class="form-label text-secondary">Teléfono</label>
+                            <input type="text" id="telefono" class="form-control" placeholder="Ej. 5512345678" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="destino" class="form-label text-secondary">Destino</label>
+                            <input type="text" id="destino" class="form-control" placeholder="Dirección de envío" />
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="metodoPago" class="form-label text-secondary">Método de pago</label>
+                            <select class="form-select" id="metodoPago">
+                                <option value="" disabled selected>Selecciona un método de pago</option>
+                                <option value="tarjeta">Tarjeta</option>
+                                <option value="paypal">PayPal</option>
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label for="metodoPago" class="form-label">Método de pago</label>
-                        <select class="form-select" id="metodoPago">
-                            <option value="" disabled selected>Selecciona un método de pago</option>
-                            <option value="tarjeta">Tarjeta</option>
-                            <option value="paypal">PayPal</option>
-                        </select>
-                    </div>
-
-                    <div id="camposTarjeta" class="d-none">
-                        <div class="mb-3">
-                            <label class="form-label">Nombre del titular</label>
-                            <input type="text" class="form-control" placeholder="Nombre completo">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">Número de tarjeta</label>
-                            <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">Fecha de vencimiento</label>
+                    <!-- Tarjeta -->
+                    <div id="camposTarjeta" class="d-none mt-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Nombre del titular</label>
+                                <input type="text" class="form-control" placeholder="Nombre completo">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Número de tarjeta</label>
+                                <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Fecha de vencimiento</label>
                                 <input type="month" class="form-control">
                             </div>
-                            <div class="col-md-6 mb-3">
-                                <label class="form-label">CVV</label>
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">CVV</label>
                                 <input type="text" class="form-control" placeholder="123">
                             </div>
                         </div>
                     </div>
 
-                    <div id="camposPayPal" class="d-none">
-                        <div class="mb-3">
-                            <label class="form-label">Correo electrónico de PayPal</label>
-                            <input type="email" class="form-control" placeholder="email@paypal.com">
+                    <!-- PayPal -->
+                    <div id="camposPayPal" class="d-none mt-4">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label class="form-label text-secondary">Correo de PayPal</label>
+                                <input type="email" class="form-control" placeholder="email@paypal.com">
+                            </div>
                         </div>
                     </div>
-
-                
-                <div class="mb-3">
-                    <label for="telefono" class="form-label">Teléfono</label>
-                    <input type="text" id="telefono" class="form-control" placeholder="Ej. 5512345678" />
                 </div>
-
-                <div class="mb-3">
-                    <label for="destino" class="form-label">Destino</label>
-                    <input type="text" id="destino" class="form-control" placeholder="Dirección de envío" />
-                </div>
-				</div>
                 <div class="modal-footer">
                     <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button class="btn btn-success">Confirmar compra</button>
@@ -274,7 +327,7 @@
             const codigo = card.find('p:contains("Código")').text();
             const existencia = card.find('p:contains("Existencia")').text();
             const imgSrc = card.find('img').attr('src');
-
+            console.log(selectedSucursal)
             if (!selectedSucursal) {
                 mostrarAlerta("Por favor selecciona una sucursal antes de continuar.", 'danger');
                 return;
@@ -308,11 +361,13 @@
             const modal = new bootstrap.Modal(document.getElementById('modalCompra'));
             modal.show();
         });
-                $('.btn-success').on('click', function () {
+          $('.btn-success').on('click', function () {
             const info = $('#infoJuegoSeleccionado');
-            const juegoId = $('.comprar-btn').data('juego-id');
-            const selectedSucursalVal = $(`#sucursal_${juegoId}`).val();
+            const juegoId = $('#modalCompra').data('juego-id');
+            const selectedSucursalVal = $('#modalCompra').data('sucursal');
 
+             console.log(juegoId)
+            console.log(selectedSucursalVal)
             if (!selectedSucursalVal) {
                 mostrarAlerta("No se ha seleccionado una sucursal válida.", 'danger');
                 return;
@@ -332,6 +387,17 @@
 
             if (!destino) {
                 mostrarAlerta("Por favor ingresa un destino válido.", 'danger');
+                return;
+            } const nombre = $('#nombre').val().trim();
+            const apellido = $('#apellido').val().trim();
+
+            if (!nombre) {
+                mostrarAlerta("Por favor ingresa un nombre válido.", 'danger');
+                return;
+            }
+
+            if (!apellido) {
+                mostrarAlerta("Por favor ingresa un apellido válido.", 'danger');
                 return;
             }
 
@@ -372,6 +438,8 @@
                 Cantidad: cantidad,
                 Telefono: telefono,
                 Destino: destino,
+                Nombre: nombre,
+                Apellido: apellido,
             };
 
                  $.ajax({

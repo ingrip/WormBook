@@ -33,6 +33,7 @@ public partial class MiContexto : DbContext
     public DbSet<Login> Logins { get; set; }
 
     public virtual DbSet<Sucursal> Sucursals { get; set; }
+    public virtual DbSet<Cliente> Cliente { get; set; }
 
     public virtual DbSet<Ventum> Venta { get; set; }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -97,6 +98,25 @@ public partial class MiContexto : DbContext
             entity.Property(e => e.Telefono)
                 .HasColumnName("TELEFONO")
                 .HasColumnType("NUMBER(38)");
+        });
+        modelBuilder.Entity<Cliente>(entity =>
+        {
+            entity.HasKey(e => e.Telefono);
+
+            entity.ToTable("CLIENTE");
+
+            entity.Property(e => e.Telefono)
+                .HasColumnName("TELEFONO")
+                .HasColumnType("NUMBER(38)");
+
+            entity.Property(e => e.Nombre)
+                .HasColumnName("NOMBRE")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Apellido)
+                .HasColumnName("APELLIDO")
+                .HasMaxLength(100);
+
         });
 
         modelBuilder.Entity<Existencium>(entity =>

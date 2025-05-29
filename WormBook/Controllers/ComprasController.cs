@@ -75,6 +75,92 @@ namespace WormBook.Controllers
 
                     _context.Envios.Add(nuevoEnvio);
                     _context.SaveChanges();
+                    var nuevoCliente = new Cliente
+                    {
+                        Telefono = request.Telefono,
+                        Nombre = request.Nombre,
+                        Apellido = request.Apellido,
+                    };
+                    _context.Cliente.Add(nuevoCliente);
+                    _context.SaveChanges();
+                    return Json(new { success = true, message = "Compra realizada exitosamente y envío registrado." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = "Error al procesar la compra: " + ex.Message });
+            }
+        }
+        public ActionResult ComprasLibro()
+        {
+            var libro = _context.Libros
+       .Include(j => j.CodigoInternoNavigation)
+           .ThenInclude(c => c.Existencia)
+            .ToList();
+
+            var sucursales = _context.Sucursals
+                .Select(s => new { Codigo = s.Codigosucursal, Nombre = s.Nombresucursal })
+                .ToList();
+
+            ViewBag.Sucursales = sucursales;
+
+            return View(libro);
+        }
+        [HttpPost]
+        public IActionResult ComprarLibro([FromBody] CompraLibro request)
+        {
+            try
+            {
+                var existencia = _context.Existencia
+                    .FirstOrDefault(e => e.CodigoInterno == request.LibroId && e.Codigosucursal == request.CodigoSucursal);
+
+                if (existencia == null)
+                {
+                    return Json(new { success = false, message = "La sucursal o libro no existe." });
+                }
+
+                bool hayStock = existencia.Existencia > 0;
+
+                bool esValidacionSolo = Request.Headers.ContainsKey("X-Validation-Only") && Request.Headers["X-Validation-Only"] == "true";
+
+                if (esValidacionSolo)
+                {
+                    return Json(new
+                    {
+                        success = hayStock,
+                        message = hayStock ? "Stock disponible." : "No hay stock disponible en la sucursal seleccionada."
+                    });
+                }
+                else
+                {
+                    if (request.Cantidad <= 0)
+                        return Json(new { success = false, message = "Cantidad inválida." });
+
+                    if (existencia.Existencia < request.Cantidad)
+                        return Json(new { success = false, message = "No hay suficiente stock para la cantidad solicitada." });
+
+                    // Reducir stock
+                    existencia.Existencia -= request.Cantidad;
+                    _context.SaveChanges();
+
+                    var nuevoEnvio = new Envio
+                    {
+                        Guiaenvio = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmssfff")),
+                        Numcajas = request.Cantidad,
+                        Sucursalorigen = request.CodigoSucursal,
+                    };
+
+                    _context.Envios.Add(nuevoEnvio);
+                    _context.SaveChanges();
+
+                    var nuevoCliente = new Cliente
+                    {
+                        Telefono = request.Telefono,
+                        Nombre = request.Nombre,
+                        Apellido = request.Apellido,
+                    };
+                    _context.Cliente.Add(nuevoCliente);
+                    _context.SaveChanges();
 
                     return Json(new { success = true, message = "Compra realizada exitosamente y envío registrado." });
                 }
@@ -85,7 +171,9 @@ namespace WormBook.Controllers
             }
         }
 
-       
+
+
+
         // GET: ComprasController/Create
         public ActionResult Create()
         {
@@ -156,6 +244,18 @@ namespace WormBook.Controllers
         public int Cantidad { get; set; }
         public string Destino { get; set; }
         public int Telefono { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
+    }
+    public class CompraLibro
+    {
+        public int LibroId { get; set; }
+        public int CodigoSucursal { get; set; }
+        public int Cantidad { get; set; }
+        public string Destino { get; set; }
+        public int Telefono { get; set; }
+        public string Nombre { get; set; }
+        public string Apellido { get; set; }
     }
 
 }
