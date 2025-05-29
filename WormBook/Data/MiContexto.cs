@@ -15,8 +15,11 @@ public partial class MiContexto : DbContext
     {
     }
 
+<<<<<<< HEAD
     public virtual DbSet<Cliente> Clientes { get; set; }
 
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
     public virtual DbSet<Envio> Envios { get; set; }
 
     public virtual DbSet<Existencium> Existencia { get; set; }
@@ -34,7 +37,17 @@ public partial class MiContexto : DbContext
     public virtual DbSet<Productovendido> Productovendidos { get; set; }
     public DbSet<Login> Logins { get; set; }
 
+<<<<<<< HEAD
+=======
 
+<<<<<<< HEAD
+=======
+    public virtual DbSet<Repodetalle> Repodetalles { get; set; }
+
+    public virtual DbSet<Repopedido> Repopedidos { get; set; }
+
+>>>>>>> 87e1c6203a452b6ead4d65227f7ce2baa8069435
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
     public virtual DbSet<Sucursal> Sucursals { get; set; }
 
     public virtual DbSet<Ventum> Venta { get; set; }
@@ -44,6 +57,9 @@ public partial class MiContexto : DbContext
     {
         modelBuilder.UseCollation("USING_NLS_COMP");
 
+<<<<<<< HEAD
+ 
+=======
      
         modelBuilder.Entity<Login>(entity =>
         {
@@ -78,6 +94,7 @@ public partial class MiContexto : DbContext
 
         });
 
+<<<<<<< HEAD
         modelBuilder.Entity<Cliente>(entity =>
         {
             entity.ToTable("ENVIO");
@@ -94,6 +111,9 @@ public partial class MiContexto : DbContext
             
         });
 
+=======
+>>>>>>> 87e1c6203a452b6ead4d65227f7ce2baa8069435
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 
         modelBuilder.Entity<Envio>(entity =>
         {
@@ -205,6 +225,10 @@ public partial class MiContexto : DbContext
                 .HasConstraintName("FK_LIBRO_PRODUCTO");
         });
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
         modelBuilder.Entity<ProductPriv>(entity =>
         {
             entity
@@ -284,7 +308,10 @@ public partial class MiContexto : DbContext
                 .HasForeignKey(d => d.Guiaenvio)
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PRODUCTOSENVIADOS_ENVIO");
+<<<<<<< HEAD
 
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
         });
 
         modelBuilder.Entity<Productovendido>(entity =>
@@ -336,7 +363,10 @@ public partial class MiContexto : DbContext
                 .HasColumnName("UBICACION");
         });
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
         modelBuilder.Entity<Ventum>(entity =>
         {
             entity.HasKey(e => e.Numventa);

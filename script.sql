@@ -1,5 +1,8 @@
 --Script
+<<<<<<< HEAD
 DROP TABLE  Cliente           CASCADE CONSTRAINTS;
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 DROP TABLE  envio           CASCADE CONSTRAINTS;
 DROP TABLE  existencia           CASCADE CONSTRAINTS;
 DROP TABLE  juegomesa                CASCADE CONSTRAINTS;
@@ -10,6 +13,7 @@ DROP TABLE  sucursal   CASCADE CONSTRAINTS;
 DROP TABLE  venta            CASCADE CONSTRAINTS;
 DROP TABLE  productovendido            CASCADE CONSTRAINTS;
 
+<<<<<<< HEAD
 CREATE TABLE Cliente
 (
 	Telefono             INTEGER NOT NULL ,
@@ -21,13 +25,20 @@ ALTER TABLE Cliente
 	ADD CONSTRAINT  XPKCliente PRIMARY KEY (Telefono);
 
 
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 CREATE TABLE Envio
 (
 	GuiaEnvio            INTEGER NOT NULL ,
 	NumCajas             INTEGER NOT NULL ,
+<<<<<<< HEAD
 	Destino      VARCHAR2(100) NOT NULL ,
 	SucursalOrigen       INTEGER NOT NULL,
 	Telefono             INTEGER NOT NULL
+=======
+	Destino      INTEGER NOT NULL ,
+	SucursalOrigen       INTEGER NOT NULL 
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 );
 
 ALTER TABLE Envio
@@ -119,9 +130,12 @@ ALTER TABLE Venta
 	ADD CONSTRAINT  PK_Venta PRIMARY KEY (NumVenta);
 
 ALTER TABLE Envio
+<<<<<<< HEAD
 	ADD (CONSTRAINT R_38 FOREIGN KEY (Telefono) REFERENCES Cliente (Telefono));
 
 ALTER TABLE Envio
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 	ADD (CONSTRAINT R_49 FOREIGN KEY (SucursalOrigen) REFERENCES Sucursal (CodigoSucursal));
 
 ALTER TABLE Existencia
@@ -167,12 +181,15 @@ ALTER TABLE ProductoVendido
     ADD CONSTRAINT R_10 FOREIGN KEY (CodigoInterno) 
     REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
 
+<<<<<<< HEAD
 -- Cliente
 INSERT INTO cliente VALUES (5551234567, 'Sucursal', 'Almacén Central');
 INSERT INTO cliente VALUES (6145678901, 'Sucursal', 'Chihuahua');
 INSERT INTO cliente VALUES (2292345678, 'Sucursal', 'Veracruz');
 INSERT INTO cliente VALUES (8182345678, 'Sucursal', 'Monterrey');
 
+=======
+>>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 -- Sucursal
 INSERT INTO Sucursal VALUES (10, 'Almacén Central', 'Ciudad de México', 5551234567);
 INSERT INTO Sucursal VALUES (11, 'Sucursal Norte', 'Monterrey', 8182345678);
