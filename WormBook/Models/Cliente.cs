@@ -5,13 +5,10 @@ namespace WormBook.Models;
 
 public partial class Cliente
 {
-    public int Idcliente { get; set; }
+    public int Telefono { get; set; }
 
-    public string Nombre { get; set; } = null!;
+    public required string Nombre { get; set; }
 
-    public string Apellido { get; set; } = null!;
+    public required string Apellido { get; set; }
 
-    public string Telefono { get; set; } = null!;
-
-    public virtual ICollection<Pedidoespecial> Pedidoespecials { get; set; } = new List<Pedidoespecial>();
 }

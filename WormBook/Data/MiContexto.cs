@@ -15,7 +15,6 @@ public partial class MiContexto : DbContext
     {
     }
 
-
     public virtual DbSet<Cliente> Clientes { get; set; }
 
     public virtual DbSet<Envio> Envios { get; set; }
@@ -25,8 +24,6 @@ public partial class MiContexto : DbContext
     public virtual DbSet<Juegomesa> Juegomesas { get; set; }
 
     public virtual DbSet<Libro> Libros { get; set; }
-
-    public virtual DbSet<Pedidoespecial> Pedidoespecials { get; set; }
 
     public virtual DbSet<ProductPriv> ProductPrivs { get; set; }
 
@@ -38,13 +35,7 @@ public partial class MiContexto : DbContext
     public DbSet<Login> Logins { get; set; }
 
 
-    public virtual DbSet<Repodetalle> Repodetalles { get; set; }
-
-    public virtual DbSet<Repopedido> Repopedidos { get; set; }
-
     public virtual DbSet<Sucursal> Sucursals { get; set; }
-
-    public virtual DbSet<Tarjetaregalo> Tarjetaregalos { get; set; }
 
     public virtual DbSet<Ventum> Venta { get; set; }
 
@@ -54,28 +45,6 @@ public partial class MiContexto : DbContext
         modelBuilder.UseCollation("USING_NLS_COMP");
 
      
-        modelBuilder.Entity<Cliente>(entity =>
-        {
-            entity.HasKey(e => e.Idcliente);
-
-            entity.ToTable("CLIENTE");
-
-            entity.Property(e => e.Idcliente)
-                .HasPrecision(10)
-                .HasColumnName("IDCLIENTE");
-            entity.Property(e => e.Apellido)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("APELLIDO");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("NOMBRE");
-            entity.Property(e => e.Telefono)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("TELEFONO");
-        });
         modelBuilder.Entity<Login>(entity =>
         {
             entity.HasKey(e => e.userId);
@@ -109,6 +78,22 @@ public partial class MiContexto : DbContext
 
         });
 
+        modelBuilder.Entity<Cliente>(entity =>
+        {
+            entity.ToTable("ENVIO");
+
+            entity.Property(e => e.Telefono)
+                .HasPrecision(10)
+                .HasColumnName("TELEFONO");
+            entity.Property(e => e.Nombre)
+                .HasPrecision(10)
+                .HasColumnName("NOMBRE");
+            entity.Property(e => e.Apellido)
+                .HasPrecision(10)
+                .HasColumnName("APELLIDO");
+            
+        });
+
 
         modelBuilder.Entity<Envio>(entity =>
         {
@@ -122,17 +107,12 @@ public partial class MiContexto : DbContext
             entity.Property(e => e.Numcajas)
                 .HasPrecision(10)
                 .HasColumnName("NUMCAJAS");
-            entity.Property(e => e.Sucursaldestino)
+            entity.Property(e => e.Destino)
                 .HasPrecision(10)
-                .HasColumnName("SUCURSALDESTINO");
+                .HasColumnName("DESTINO");
             entity.Property(e => e.Sucursalorigen)
                 .HasPrecision(10)
                 .HasColumnName("SUCURSALORIGEN");
-
-            entity.HasOne(d => d.SucursaldestinoNavigation).WithMany(p => p.EnvioSucursaldestinoNavigations)
-                .HasForeignKey(d => d.Sucursaldestino)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ENVIO_SUCURSALDESTINO");
 
             entity.HasOne(d => d.SucursalorigenNavigation).WithMany(p => p.EnvioSucursalorigenNavigations)
                 .HasForeignKey(d => d.Sucursalorigen)
@@ -225,50 +205,6 @@ public partial class MiContexto : DbContext
                 .HasConstraintName("FK_LIBRO_PRODUCTO");
         });
 
-        modelBuilder.Entity<Pedidoespecial>(entity =>
-        {
-            entity.HasKey(e => e.Numpedido);
-
-            entity.ToTable("PEDIDOESPECIAL");
-
-            entity.Property(e => e.Numpedido)
-                .HasPrecision(10)
-                .HasColumnName("NUMPEDIDO");
-            entity.Property(e => e.Cantidadpedida)
-                .HasPrecision(10)
-                .HasColumnName("CANTIDADPEDIDA");
-            entity.Property(e => e.CodigoInterno)
-                .HasPrecision(10)
-                .HasColumnName("CODIGOINTERNO");
-            entity.Property(e => e.Codigosucursal)
-                .HasPrecision(10)
-                .HasColumnName("CODIGOSUCURSAL");
-            entity.Property(e => e.Estado)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("ESTADO");
-            entity.Property(e => e.Fechapedido)
-                .HasColumnType("DATE")
-                .HasColumnName("FECHAPEDIDO");
-            entity.Property(e => e.Idcliente)
-                .HasPrecision(10)
-                .HasColumnName("IDCLIENTE");
-
-            entity.HasOne(d => d.CodigoInternoNavigation).WithMany(p => p.Pedidoespecials)
-                .HasForeignKey(d => d.CodigoInterno)
-                .HasConstraintName("FK_PEDIDOESPECIAL_PRODUCTO");
-
-            entity.HasOne(d => d.CodigosucursalNavigation).WithMany(p => p.Pedidoespecials)
-                .HasForeignKey(d => d.Codigosucursal)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PEDIDOESPECIAL_SUCURSAL");
-
-            entity.HasOne(d => d.IdclienteNavigation).WithMany(p => p.Pedidoespecials)
-                .HasForeignKey(d => d.Idcliente)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PEDIDOESPECIAL_CLIENTE");
-        });
-
         modelBuilder.Entity<ProductPriv>(entity =>
         {
             entity
@@ -339,13 +275,6 @@ public partial class MiContexto : DbContext
             entity.Property(e => e.Cantidadenviada)
                 .HasPrecision(10)
                 .HasColumnName("CANTIDADENVIADA");
-            entity.Property(e => e.Novedad)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("NOVEDAD");
-            entity.Property(e => e.Numpedidoesp)
-                .HasPrecision(10)
-                .HasColumnName("NUMPEDIDOESP");
 
             entity.HasOne(d => d.CodigoInternoNavigation).WithMany(p => p.Productosenviados)
                 .HasForeignKey(d => d.CodigoInterno)
@@ -356,9 +285,6 @@ public partial class MiContexto : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PRODUCTOSENVIADOS_ENVIO");
 
-            entity.HasOne(d => d.NumpedidoespNavigation).WithMany(p => p.Productosenviados)
-                .HasForeignKey(d => d.Numpedidoesp)
-                .HasConstraintName("FK_PRODUCTOSENVIADOS_PEDIDOESPECIAL");
         });
 
         modelBuilder.Entity<Productovendido>(entity =>
@@ -386,53 +312,7 @@ public partial class MiContexto : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_PRODUCTOVENDIDO_VENTA");
         });
-        modelBuilder.Entity<Repodetalle>(entity =>
-        {
-            entity.HasKey(e => new { e.CodigoInterno, e.Numrepo });
 
-            entity.ToTable("REPODETALLES");
-
-            entity.Property(e => e.CodigoInterno)
-                .HasPrecision(10)
-                .HasColumnName("CODIGOINTERNO");
-            entity.Property(e => e.Numrepo)
-                .HasPrecision(10)
-                .HasColumnName("NUMREPO");
-            entity.Property(e => e.Cantidad)
-                .HasPrecision(10)
-                .HasColumnName("CANTIDAD");
-
-            entity.HasOne(d => d.CodigoInternoNavigation).WithMany(p => p.Repodetalles)
-                .HasForeignKey(d => d.CodigoInterno)
-                .HasConstraintName("FK_REPODETALLES_PRODUCTO");
-
-            entity.HasOne(d => d.NumrepoNavigation).WithMany(p => p.Repodetalles)
-                .HasForeignKey(d => d.Numrepo)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_REPODETALLES_REPOPEDIDO");
-        });
-
-        modelBuilder.Entity<Repopedido>(entity =>
-        {
-            entity.HasKey(e => e.Numrepo);
-
-            entity.ToTable("REPOPEDIDO");
-
-            entity.Property(e => e.Numrepo)
-                .HasPrecision(10)
-                .HasColumnName("NUMREPO");
-            entity.Property(e => e.Codigosucursal)
-                .HasPrecision(10)
-                .HasColumnName("CODIGOSUCURSAL");
-            entity.Property(e => e.Fechapedido)
-                .HasColumnType("DATE")
-                .HasColumnName("FECHAPEDIDO");
-
-            entity.HasOne(d => d.CodigosucursalNavigation).WithMany(p => p.Repopedidos)
-                .HasForeignKey(d => d.Codigosucursal)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_REPOPEDIDO_SUCURSAL");
-        });
         modelBuilder.Entity<Sucursal>(entity =>
         {
             entity.HasKey(e => e.Codigosucursal);
@@ -456,24 +336,6 @@ public partial class MiContexto : DbContext
                 .HasColumnName("UBICACION");
         });
 
-        modelBuilder.Entity<Tarjetaregalo>(entity =>
-        {
-            entity.HasKey(e => e.CodigoInterno);
-
-            entity.ToTable("TARJETAREGALO");
-
-            entity.Property(e => e.CodigoInterno)
-                .HasPrecision(10)
-                .ValueGeneratedNever()
-                .HasColumnName("CODIGOINTERNO");
-            entity.Property(e => e.Saldo)
-                .HasPrecision(10)
-                .HasColumnName("SALDO");
-
-            entity.HasOne(d => d.CodigoInternoNavigation).WithOne(p => p.Tarjetaregalo)
-                .HasForeignKey<Tarjetaregalo>(d => d.CodigoInterno)
-                .HasConstraintName("FK_TARJETAREGALO_PRODUCTO");
-        });
 
         modelBuilder.Entity<Ventum>(entity =>
         {
@@ -499,11 +361,8 @@ public partial class MiContexto : DbContext
                 .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("FK_VENTA_SUCURSAL");
         });
-        modelBuilder.HasSequence("CLIENTE_SEQ");
         modelBuilder.HasSequence("ENVIO_SEQ");
-        modelBuilder.HasSequence("PEDIDOESPECIAL_SEQ");
         modelBuilder.HasSequence("PRODUCTO_SEQ");
-        modelBuilder.HasSequence("REPOPEDIDO_SEQ");
         modelBuilder.HasSequence("SUCURSAL_SEQ");
         modelBuilder.HasSequence("VENTA_SEQ");
 

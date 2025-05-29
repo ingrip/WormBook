@@ -9,7 +9,7 @@ public partial class Envio
 
     public int Numcajas { get; set; }
 
-    public int Sucursaldestino { get; set; }
+    public string Destino { get; set; }
 
     public int Sucursalorigen { get; set; }
 
