@@ -37,15 +37,47 @@ namespace WormBook.Controllers
                 var existencia = _context.Existencia
                     .FirstOrDefault(e => e.CodigoInterno == request.JuegoId && e.Codigosucursal == request.CodigoSucursal);
 
-                if (existencia == null || existencia.Existencia <= 0)
+                if (existencia == null)
                 {
-                    return Json(new { success = false, message = "No hay suficiente stock en la sucursal seleccionada." });
+                    return Json(new { success = false, message = "La sucursal o juego no existe." });
                 }
 
-                existencia.Existencia -= 1;
-                _context.SaveChanges();
+                bool esValidacionSolo = Request.Headers.ContainsKey("X-Validation-Only") && Request.Headers["X-Validation-Only"] == "true";
 
-                return Json(new { success = true, message = "Compra realizada exitosamente." });
+                if (esValidacionSolo)
+                {
+                    return Json(new
+                    {
+                        success = existencia.Existencia > 0,
+                        message = existencia.Existencia > 0 ? "Stock disponible." : "No hay stock disponible en la sucursal seleccionada."
+                    });
+                }
+                else
+                {
+                    if (request.Cantidad <= 0)
+                        return Json(new { success = false, message = "Cantidad inválida." });
+
+                    if (existencia.Existencia < request.Cantidad)
+                        return Json(new { success = false, message = "No hay suficiente stock para la cantidad solicitada." });
+
+                    existencia.Existencia -= request.Cantidad;
+                    _context.SaveChanges();
+
+
+                    var nuevoEnvio = new Envio
+                    {
+                        Guiaenvio = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmssfff")),
+                        Numcajas = request.Cantidad,
+                        Destino = request.Destino,
+                        Sucursalorigen = request.CodigoSucursal,
+                        Telefono = request.Telefono
+                    };
+
+                    _context.Envios.Add(nuevoEnvio);
+                    _context.SaveChanges();
+
+                    return Json(new { success = true, message = "Compra realizada exitosamente y envío registrado." });
+                }
             }
             catch (Exception ex)
             {
@@ -53,6 +85,7 @@ namespace WormBook.Controllers
             }
         }
 
+       
         // GET: ComprasController/Create
         public ActionResult Create()
         {
@@ -120,6 +153,9 @@ namespace WormBook.Controllers
     {
         public int JuegoId { get; set; }
         public int CodigoSucursal { get; set; }
+        public int Cantidad { get; set; }
+        public string Destino { get; set; }
+        public int Telefono { get; set; }
     }
 
 }

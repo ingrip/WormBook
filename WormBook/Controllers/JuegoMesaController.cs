@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WormBook.Models;  // Ajusta el namespace de MiContexto y modelo JuegoMesa si es necesario
@@ -13,8 +14,10 @@ namespace WormBook.Controllers
         {
             _context = context;
         }
+        [AllowAnonymous]
         public async Task<IActionResult> JuegoMesa()
         {
+            ViewData["IsLoggedIn"] = User.Identity.IsAuthenticated;
             var juegos = await _context.Juegomesas
                 .Include(j => j.CodigointernoNavigation)
                 .ThenInclude(p => p.Existencia)

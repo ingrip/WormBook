@@ -19,9 +19,5 @@ public partial class Sucursal
 
     public virtual ICollection<Existencium> Existencia { get; set; } = new List<Existencium>();
 
-    public virtual ICollection<Pedidoespecial> Pedidoespecials { get; set; } = new List<Pedidoespecial>();
-
-    public virtual ICollection<Repopedido> Repopedidos { get; set; } = new List<Repopedido>();
-
     public virtual ICollection<Ventum> Venta { get; set; } = new List<Ventum>();
 }

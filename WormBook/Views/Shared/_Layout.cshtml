@@ -33,15 +33,24 @@
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                 aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
+
+
                 </button>
+
+               
                 @if (isLoggedIn)
                 {
-                    
+                    <form method="post" action="@Url.Action("Logout", "Login")" style="display:inline;">
+                        <button type="submit" class="btn btn-outline-danger ms-auto">
+                            Cerrar sesión
+                        </button>
+                    </form>
                 }
                 else
                 {
-                   
                 }
+
+                
             </div>
         </nav>
     </header>

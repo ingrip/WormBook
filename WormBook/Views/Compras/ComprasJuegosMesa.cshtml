@@ -1,0 +1,422 @@
+﻿@model IEnumerable<WormBook.Models.Juegomesa>
+@{
+    ViewData["Title"] = "Catálogo de Juegos de Mesa";
+    Layout = "_PublicLayout";
+}
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f0f4f8;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 20px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+            .card:hover {
+                transform: translateY(-5px);
+                box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+            }
+
+        .card-img-top {
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            object-fit: cover;
+            height: 250px;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .card-text {
+            color: #777;
+        }
+
+        .btn-primary {
+            border-radius: 30px;
+            background: #80b3ff;
+            border-color: #80b3ff;
+            font-weight: 600;
+            padding: 0.75rem 1.5rem;
+            transition: background 0.3s ease, transform 0.3s ease;
+        }
+
+            .btn-primary:hover {
+                background: #6fa0ff;
+                transform: translateY(-2px);
+            }
+
+        .form-select {
+            border-radius: 10px;
+            box-shadow: none;
+            border: 1px solid #ddd;
+        }
+
+            .form-select:focus {
+                border-color: #80b3ff;
+                box-shadow: 0 0 8px rgba(128, 179, 255, 0.5);
+            }
+
+        .form-label {
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div id="alert-global" style="position: fixed; top: 1rem; right: 1rem; z-index: 1055; min-width: 300px;"></div>
+
+    <div class="container py-5">
+        <h1 class="text-center mb-5 text-primary display-4">🎲 Catálogo de Juegos de Mesa</h1>
+
+        <div class="row justify-content-center">
+            @foreach (var juego in Model)
+            {
+                <div class="col-md-6 col-lg-4 mb-4">
+                    <div class="card text-center">
+                        <img src="@(juego.URL ?? "https://via.placeholder.com/300x200?text=Juego+de+Mesa")" class="card-img-top" alt="@juego.Nombre" />
+                        <div class="card-body d-flex flex-column">
+                            <h4 class="card-title text-dark">@juego.Nombre</h4>
+                            <p class="text-muted">@juego.Marca</p>
+                            <p><strong>Código:</strong> @juego.Codigointerno</p>
+                            <p>
+                                <strong>Existencia total:</strong>
+                                @{
+                                    int existenciaTotal = 0;
+                                    if (juego.CodigointernoNavigation?.Existencia != null)
+                                    {
+                                        foreach (var existencia in juego.CodigointernoNavigation.Existencia)
+                                        {
+                                            existenciaTotal += existencia.Existencia;
+                                        }
+                                    }
+                                }
+                                @existenciaTotal
+                            </p>
+
+                            <div class="mt-3">
+                                <label for="sucursal_@juego.Codigointerno" class="form-label">Seleccionar sucursal</label>
+                                <select id="sucursal_@juego.Codigointerno" class="form-select mb-2 sucursal-select" data-juego-id="@juego.Codigointerno">
+                                    <option selected disabled>Selecciona una sucursal...</option>
+                                    @foreach (var sucursal in ViewBag.Sucursales)
+                                    {
+                                        <option value="@sucursal.Codigo">@sucursal.Nombre</option>
+                                    }
+                                </select>
+
+                                <div id="alerta_@juego.Codigointerno"></div>
+
+                                <button class="btn btn-primary w-100 comprar-btn" data-juego-id="@juego.Codigointerno" disabled>
+                                    <i class="bi bi-cart-plus"></i> Comprar
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- Modal de compra -->
+    <div class="modal fade" id="modalCompra" tabindex="-1" aria-labelledby="modalCompraLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="modalCompraLabel">Confirmar compra</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="infoJuegoSeleccionado" class="mb-4">
+                        <!-- Aquí irá info del juego -->
+                    </div>
+                    <div class="mb-3">
+                        <label for="cantidadCompra" class="form-label">Cantidad a comprar</label>
+                        <input type="number" id="cantidadCompra" class="form-control" value="1" min="1" max="99" />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="metodoPago" class="form-label">Método de pago</label>
+                        <select class="form-select" id="metodoPago">
+                            <option value="" disabled selected>Selecciona un método de pago</option>
+                            <option value="tarjeta">Tarjeta</option>
+                            <option value="paypal">PayPal</option>
+                        </select>
+                    </div>
+
+                    <div id="camposTarjeta" class="d-none">
+                        <div class="mb-3">
+                            <label class="form-label">Nombre del titular</label>
+                            <input type="text" class="form-control" placeholder="Nombre completo">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Número de tarjeta</label>
+                            <input type="text" class="form-control" placeholder="XXXX-XXXX-XXXX-XXXX">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Fecha de vencimiento</label>
+                                <input type="month" class="form-control">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">CVV</label>
+                                <input type="text" class="form-control" placeholder="123">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="camposPayPal" class="d-none">
+                        <div class="mb-3">
+                            <label class="form-label">Correo electrónico de PayPal</label>
+                            <input type="email" class="form-control" placeholder="email@paypal.com">
+                        </div>
+                    </div>
+
+                
+                <div class="mb-3">
+                    <label for="telefono" class="form-label">Teléfono</label>
+                    <input type="text" id="telefono" class="form-control" placeholder="Ej. 5512345678" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="destino" class="form-label">Destino</label>
+                    <input type="text" id="destino" class="form-control" placeholder="Dirección de envío" />
+                </div>
+				</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-success">Confirmar compra</button>
+                </div>
+            </div>
+        </div>
+    </div>
+   
+    <script>
+        // Validar stock al seleccionar sucursal
+        $('.sucursal-select').on('change', function () {
+            const juegoId = $(this).data('juego-id');
+            const codigoSucursal = $(this).val();
+
+            const alertaDiv = $(`#alerta_${juegoId}`);
+            const botonComprar = $(`.comprar-btn[data-juego-id='${juegoId}']`);
+
+            // Limpiar mensajes anteriores
+            alertaDiv.html('');
+            botonComprar.prop('disabled', true);
+
+            // Validar stock sin restar usando header personalizado
+            $.ajax({
+                url: '@Url.Action("ComprarJuego", "Compras")',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ JuegoId: parseInt(juegoId), CodigoSucursal: parseInt(codigoSucursal) }),
+                headers: { "X-Validation-Only": "true" },
+                success: function (response) {
+                    if (response.success) {
+                        alertaDiv.html(`<div class="alert alert-success p-2 mb-2">✅ Stock disponible. Puedes continuar con la compra.</div>`);
+                        botonComprar.prop('disabled', false);
+                    } else {
+                        alertaDiv.html(`<div class="alert alert-warning p-2 mb-2">⚠️ ${response.message}</div>`);
+                    }
+                },
+                error: function () {
+                    alertaDiv.html(`<div class="alert alert-danger p-2 mb-2">❌ Ocurrió un error al verificar el stock.</div>`);
+                }
+            });
+        });
+
+        // Mostrar campos según método de pago
+        $('#metodoPago').on('change', function () {
+            const metodo = $(this).val();
+            $('#camposTarjeta, #camposPayPal').addClass('d-none');
+            if (metodo === 'tarjeta') {
+                $('#camposTarjeta').removeClass('d-none');
+            } else if (metodo === 'paypal') {
+                $('#camposPayPal').removeClass('d-none');
+            }
+        });
+
+        // Abrir modal y cargar info del juego
+        $(document).on("click", ".comprar-btn", function () {
+            const juegoId = $(this).data("juego-id");
+            const selectedSucursal = $(`#sucursal_${juegoId}`).val();
+            const card = $(this).closest('.card');
+            const nombre = card.find('.card-title').text();
+            const marca = card.find('.text-muted').text();
+            const codigo = card.find('p:contains("Código")').text();
+            const existencia = card.find('p:contains("Existencia")').text();
+            const imgSrc = card.find('img').attr('src');
+
+            if (!selectedSucursal) {
+                mostrarAlerta("Por favor selecciona una sucursal antes de continuar.", 'danger');
+                return;
+            }
+
+            // Rellenar modal con info
+            $('#infoJuegoSeleccionado').html(`
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="${imgSrc}" alt="${nombre}" class="img-fluid rounded">
+                    </div>
+                    <div class="col-md-8">
+                        <h4>${nombre}</h4>
+                        <p><strong>${marca}</strong></p>
+                        <p>${codigo}</p>
+                        <p>${existencia}</p>
+                        <p><strong>Sucursal seleccionada:</strong> ${selectedSucursal}</p>
+                    </div>
+                </div>
+            `);
+
+            // Reset modal campos de pago
+            $('#metodoPago').val("");
+            $('#camposTarjeta, #camposPayPal').addClass('d-none');
+                 $('#modalCompra').data('juego-id', juegoId);
+        $('#modalCompra').data('sucursal', selectedSucursal);
+
+        // Reset cantidad
+        $('#cantidadCompra').val(1);
+            // Mostrar modal
+            const modal = new bootstrap.Modal(document.getElementById('modalCompra'));
+            modal.show();
+        });
+                $('.btn-success').on('click', function () {
+            const info = $('#infoJuegoSeleccionado');
+            const juegoId = $('.comprar-btn').data('juego-id');
+            const selectedSucursalVal = $(`#sucursal_${juegoId}`).val();
+
+            if (!selectedSucursalVal) {
+                mostrarAlerta("No se ha seleccionado una sucursal válida.", 'danger');
+                return;
+            }
+
+        const cantidad = parseInt($('#cantidadCompra').val());
+        if (isNaN(cantidad) || cantidad < 1) {
+            mostrarAlerta("Por favor, ingresa una cantidad válida.", 'danger');
+            return;
+        }   const telefono = $('#telefono').val().trim();
+            const destino = $('#destino').val().trim();
+
+            if (!telefono) {
+                mostrarAlerta("Por favor ingresa un teléfono válido.", 'danger');
+                return;
+            }
+
+            if (!destino) {
+                mostrarAlerta("Por favor ingresa un destino válido.", 'danger');
+                return;
+            }
+
+            // Validar método de pago
+            const metodoPago = $('#metodoPago').val();
+            if (!metodoPago) {
+                mostrarAlerta("Por favor selecciona un método de pago.", 'danger');
+                return;
+            }
+
+            // Validar campos según método de pago
+            if (metodoPago === 'tarjeta') {
+                const nombreTitular = $('#camposTarjeta input').eq(0).val().trim();
+                const numTarjeta = $('#camposTarjeta input').eq(1).val().trim();
+                const fechaVenc = $('#camposTarjeta input[type="month"]').val();
+                const cvv = $('#camposTarjeta input').eq(3).val().trim();
+
+                if (!nombreTitular || !numTarjeta || !fechaVenc || !cvv) {
+                    mostrarAlerta("Por favor completa todos los campos de tarjeta.", 'danger');
+                    return;
+                }
+
+                // Aquí puedes añadir validaciones extras (ej. formato tarjeta, CVV numérico, etc)
+            } else if (metodoPago === 'paypal') {
+                const emailPaypal = $('#camposPayPal input[type="email"]').val().trim();
+                if (!emailPaypal) {
+                    mostrarAlerta("Por favor ingresa el correo electrónico de PayPal.", 'danger');
+                    return;
+                }
+
+                // Puedes agregar validación extra para email si quieres
+            }
+
+            // Preparar payload
+            const payload = {
+                JuegoId: parseInt(juegoId),
+                CodigoSucursal: parseInt(selectedSucursalVal),
+                Cantidad: cantidad,
+                Telefono: telefono,
+                Destino: destino,
+            };
+
+                 $.ajax({
+            url: '@Url.Action("ComprarJuego", "Compras")',
+            method: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(payload),
+            success: function (response) {
+                if (response.success) {
+                    mostrarAlerta(response.message, 'success');
+                    setTimeout(() => location.reload(), 3000);
+                } else {
+                    mostrarAlerta("Error: " + response.message, 'danger');
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("Ocurrió un error en la solicitud: " + error);
+            }
+        });
+
+
+            // Cerrar modal
+            const modalEl = document.getElementById('modalCompra');
+            const modal = bootstrap.Modal.getInstance(modalEl);
+            modal.hide();
+        });
+     
+
+                function mostrarAlerta(mensaje, tipo = 'info') {
+            const alertId = `alert-${Date.now()}`;
+            const alertHtml = `
+                <div id="${alertId}" class="alert alert-${tipo} alert-dismissible fade show shadow" role="alert">
+                    ${mensaje}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+                </div>
+            `;
+            $('#alert-global').append(alertHtml);
+
+            // Auto remover después de 3.5 seg (deja 0.5 seg para que el fade out sea visible)
+            setTimeout(() => {
+                $(`#${alertId}`).alert('close');
+            }, 3500);
+        }
+
+    </script>
+
+</body>
+</html>

@@ -6,19 +6,10 @@
 <div class="text-center">
     @if (isLoggedIn)
     {
-        <form method="post" action="@Url.Action("Logout", "Login")" style="display:inline;">
-            <button type="submit" class="btn btn-danger" style="margin:10px; padding:10px 20px;">
-                Cerrar sesión
-            </button>
-        </form>
+     
     }
     else
     {
-        <form method="post" action="@Url.Action("Logout", "Login")" style="display:inline;">
-            <button type="submit" class="btn btn-danger" style="margin:10px; padding:10px 20px;">
-                Cerrar sesión
-            </button>
-        </form>
         <div id="carouselExampleDark" class="carousel carousel-dark slide">
             <!-- ...tu código del carousel aquí... -->
             <div class="carousel-indicators">
@@ -44,7 +35,7 @@
                     </div>
                 </div>
                 <div class="carousel-item" style="cursor:pointer;"
-                     onclick="window.location.href='@Url.Action("JuegoMesa", "Comprar")'">
+                     onclick="window.location.href='@Url.Action("ComprasJuegosMesa", "Compras")'">
                     <img src="img/Juegosdemesa.png" class="d-block w-100" alt="Juegos de mesa" />
                     <div class="carousel-caption d-none d-md-block">
                         <h5>Para los más peques</h5>

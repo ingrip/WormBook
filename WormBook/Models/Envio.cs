@@ -1,21 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace WormBook.Models;
 
 public partial class Envio
 {
-    public int Guiaenvio { get; set; }
+    [Key]
+    public long Guiaenvio { get; set; }
 
     public int Numcajas { get; set; }
 
-    public int Destino { get; set; }
+    public string Destino { get; set; }
 
     public int Sucursalorigen { get; set; }
-
-    public virtual ICollection<Productosenviado> Productosenviados { get; set; } = new List<Productosenviado>();
-
-    public virtual Sucursal SucursaldestinoNavigation { get; set; } = null!;
-
-    public virtual Sucursal SucursalorigenNavigation { get; set; } = null!;
+    public long Telefono { get; set;}
 }

@@ -32,49 +32,13 @@ public partial class MiContexto : DbContext
     public virtual DbSet<Productovendido> Productovendidos { get; set; }
     public DbSet<Login> Logins { get; set; }
 
-<<<<<<< HEAD
-=======
-
-    public virtual DbSet<Repodetalle> Repodetalles { get; set; }
-
-    public virtual DbSet<Repopedido> Repopedidos { get; set; }
-
->>>>>>> 87e1c6203a452b6ead4d65227f7ce2baa8069435
     public virtual DbSet<Sucursal> Sucursals { get; set; }
 
     public virtual DbSet<Ventum> Venta { get; set; }
-
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.UseCollation("USING_NLS_COMP");
 
-<<<<<<< HEAD
- 
-=======
-     
-        modelBuilder.Entity<Cliente>(entity =>
-        {
-            entity.HasKey(e => e.Idcliente);
-
-            entity.ToTable("CLIENTE");
-
-            entity.Property(e => e.Idcliente)
-                .HasPrecision(10)
-                .HasColumnName("IDCLIENTE");
-            entity.Property(e => e.Apellido)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("APELLIDO");
-            entity.Property(e => e.Nombre)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("NOMBRE");
-            entity.Property(e => e.Telefono)
-                .HasMaxLength(20)
-                .IsUnicode(false)
-                .HasColumnName("TELEFONO");
-        });
         modelBuilder.Entity<Login>(entity =>
         {
             entity.HasKey(e => e.userId);
@@ -108,8 +72,6 @@ public partial class MiContexto : DbContext
 
         });
 
->>>>>>> 87e1c6203a452b6ead4d65227f7ce2baa8069435
-
         modelBuilder.Entity<Envio>(entity =>
         {
             entity.HasKey(e => e.Guiaenvio);
@@ -117,22 +79,24 @@ public partial class MiContexto : DbContext
             entity.ToTable("ENVIO");
 
             entity.Property(e => e.Guiaenvio)
-                .HasPrecision(10)
-                .HasColumnName("GUIAENVIO");
-            entity.Property(e => e.Numcajas)
-                .HasPrecision(10)
-                .HasColumnName("NUMCAJAS");
-            entity.Property(e => e.Destino)
-                .HasPrecision(10)
-                .HasColumnName("SUCURSALDESTINO");
-            entity.Property(e => e.Sucursalorigen)
-                .HasPrecision(10)
-                .HasColumnName("SUCURSALORIGEN");
+                .HasColumnName("GUIAENVIO")
+                .HasColumnType("NUMBER(38)");
 
-            entity.HasOne(d => d.SucursalorigenNavigation).WithMany(p => p.EnvioSucursalorigenNavigations)
-                .HasForeignKey(d => d.Sucursalorigen)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_ENVIO_SUCURSALORIGEN");
+            entity.Property(e => e.Numcajas)
+                .HasColumnName("NUMCAJAS")
+                .HasColumnType("NUMBER(38)");
+
+            entity.Property(e => e.Destino)
+                .HasColumnName("DESTINO")
+                .HasMaxLength(100);
+
+            entity.Property(e => e.Sucursalorigen)
+                .HasColumnName("SUCURSALORIGEN")
+                .HasColumnType("NUMBER(38)");
+
+            entity.Property(e => e.Telefono)
+                .HasColumnName("TELEFONO")
+                .HasColumnType("NUMBER(38)");
         });
 
         modelBuilder.Entity<Existencium>(entity =>
@@ -296,10 +260,6 @@ public partial class MiContexto : DbContext
                 .HasForeignKey(d => d.CodigoInterno)
                 .HasConstraintName("FK_PRODUCTOSENVIADOS_PRODUCTO");
 
-            entity.HasOne(d => d.GuiaenvioNavigation).WithMany(p => p.Productosenviados)
-                .HasForeignKey(d => d.Guiaenvio)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_PRODUCTOSENVIADOS_ENVIO");
         });
 
         modelBuilder.Entity<Productovendido>(entity =>
