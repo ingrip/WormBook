@@ -1,8 +1,5 @@
 --Script
-<<<<<<< HEAD
-DROP TABLE  Cliente           CASCADE CONSTRAINTS;
-=======
->>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
+DROP TABLE  Cliente           CASCADE CONSTRAINTS
 DROP TABLE  envio           CASCADE CONSTRAINTS;
 DROP TABLE  existencia           CASCADE CONSTRAINTS;
 DROP TABLE  juegomesa                CASCADE CONSTRAINTS;
@@ -13,7 +10,6 @@ DROP TABLE  sucursal   CASCADE CONSTRAINTS;
 DROP TABLE  venta            CASCADE CONSTRAINTS;
 DROP TABLE  productovendido            CASCADE CONSTRAINTS;
 
-<<<<<<< HEAD
 CREATE TABLE Cliente
 (
 	Telefono             INTEGER NOT NULL ,
@@ -24,21 +20,13 @@ CREATE TABLE Cliente
 ALTER TABLE Cliente
 	ADD CONSTRAINT  XPKCliente PRIMARY KEY (Telefono);
 
-
-=======
->>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 CREATE TABLE Envio
 (
 	GuiaEnvio            INTEGER NOT NULL ,
 	NumCajas             INTEGER NOT NULL ,
-<<<<<<< HEAD
 	Destino      VARCHAR2(100) NOT NULL ,
 	SucursalOrigen       INTEGER NOT NULL,
-	Telefono             INTEGER NOT NULL
-=======
-	Destino      INTEGER NOT NULL ,
-	SucursalOrigen       INTEGER NOT NULL 
->>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
+	Telefono             INTEGER NOT NULL,
 );
 
 ALTER TABLE Envio
@@ -130,13 +118,8 @@ ALTER TABLE Venta
 	ADD CONSTRAINT  PK_Venta PRIMARY KEY (NumVenta);
 
 ALTER TABLE Envio
-<<<<<<< HEAD
 	ADD (CONSTRAINT R_38 FOREIGN KEY (Telefono) REFERENCES Cliente (Telefono));
 
-ALTER TABLE Envio
-=======
->>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
-	ADD (CONSTRAINT R_49 FOREIGN KEY (SucursalOrigen) REFERENCES Sucursal (CodigoSucursal));
 
 ALTER TABLE Existencia
 	ADD (CONSTRAINT R_9 FOREIGN KEY (CodigoInterno) REFERENCES Producto (CodigoInterno));
@@ -181,15 +164,12 @@ ALTER TABLE ProductoVendido
     ADD CONSTRAINT R_10 FOREIGN KEY (CodigoInterno) 
     REFERENCES Producto(CodigoInterno) ON DELETE CASCADE;
 
-<<<<<<< HEAD
 -- Cliente
 INSERT INTO cliente VALUES (5551234567, 'Sucursal', 'Almacén Central');
 INSERT INTO cliente VALUES (6145678901, 'Sucursal', 'Chihuahua');
 INSERT INTO cliente VALUES (2292345678, 'Sucursal', 'Veracruz');
 INSERT INTO cliente VALUES (8182345678, 'Sucursal', 'Monterrey');
 
-=======
->>>>>>> ec87565b3460f9e39768066ab5adff8d0af70ced
 -- Sucursal
 INSERT INTO Sucursal VALUES (10, 'Almacén Central', 'Ciudad de México', 5551234567);
 INSERT INTO Sucursal VALUES (11, 'Sucursal Norte', 'Monterrey', 8182345678);
@@ -239,23 +219,6 @@ INSERT INTO JuegoMesa VALUES (10013, 'Monopoly Clásico', 'Hasbro');
 INSERT INTO JuegoMesa VALUES (10014, 'Ajedrez de Mármol', 'Games Collection');
 INSERT INTO JuegoMesa VALUES (10015, 'Catan Edición Especial', 'Devir');
 INSERT INTO JuegoMesa VALUES (10016, 'Scrabble Deluxe', 'Mattel');
-
---Envios
-INSERT INTO Envio VALUES (5001, 3, 'Sucursal 10', 11, 5551234567);
-INSERT INTO Envio VALUES (5002, 5, 'Sucursal 12' , 10, 5551234567);
-INSERT INTO Envio VALUES (5003, 2, 'Sucursal 10', 13, 5551234567);
-INSERT INTO Envio VALUES (5004, 1, 'Sucursal 14', 10, 6145678901);
-INSERT INTO Envio VALUES (5005, 4, 'Sucursal 10', 15, 2292345678);
-INSERT INTO Envio VALUES (5006, 2, 'Sucursal 16', 10, 2292345678);
-INSERT INTO Envio VALUES (5007, 3, 'Sucursal 10', 17, 5551234567);
-INSERT INTO Envio VALUES (5008, 1, 'Sucursal 18', 10, 2292345678);
-INSERT INTO Envio VALUES (5009, 5, 'Sucursal 10', 19, 5551234567);
-INSERT INTO Envio VALUES (5010, 2, 'Sucursal 20', 10, 6145678901);
-INSERT INTO Envio VALUES (5011, 4, 'Sucursal 10', 12, 5551234567);
-INSERT INTO Envio VALUES (5012, 1, 'Sucursal 13', 10, 5551234567);
-INSERT INTO Envio VALUES (5013, 3, 'Sucursal 10', 14, 5551234567);
-INSERT INTO Envio VALUES (5014, 2, 'Sucursal 15', 10, 8182345678);
-INSERT INTO Envio VALUES (5015, 5, 'Sucursal 10', 16, 5551234567);
 
 --Existencia
 -- Existencia en Almacén Central (sucursal 10) 
@@ -520,3 +483,5 @@ CREATE TABLE Login (
     cliente NUMBER(1) DEFAULT 0 NOT NULL
 );
 ALTER TABLE Login RENAME COLUMN pass TO password;
+ALTER TABLE Envio DROP CONSTRAINT R_38;
+
