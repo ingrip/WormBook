@@ -75,6 +75,8 @@ namespace WormBook.Controllers
 
                     _context.Envios.Add(nuevoEnvio);
                     _context.SaveChanges();
+
+                    var guiaenvio = DateTime.Now.ToString("yyyyMMddHHmmssfff");
                     var nuevoCliente = new Cliente
                     {
                         Telefono = request.Telefono,
@@ -83,6 +85,33 @@ namespace WormBook.Controllers
                     };
                     _context.Cliente.Add(nuevoCliente);
                     _context.SaveChanges();
+                    var nuevoPe = new Productosenviado
+                    {
+                        CodigoInterno = request.JuegoId,
+                        Guiaenvio = int.Parse(guiaenvio),
+                        Cantidadenviada = request.Cantidad,
+                    };
+                    _context.Productosenviados.Add(nuevoPe);
+                    _context.SaveChanges();
+                    var nuevoPv = new Productovendido
+                    {
+                        CodigoInterno = request.JuegoId,
+                        Numventa = int.Parse(guiaenvio),
+                        Cantidadvendida = request.Cantidad,
+                    };
+                    _context.Productovendidos.Add(nuevoPv);
+                    _context.SaveChanges();
+                    var Nuevaventa = new Ventum
+                    {
+                        Numventa = request.JuegoId,
+                        Total = request.Precio,
+                        Fechacompra = DateTime.Now,
+                        Codigosucursal = request.CodigoSucursal
+
+                    };
+                    _context.Venta.Add(Nuevaventa);
+                    _context.SaveChanges();
+
                     return Json(new { success = true, message = "Compra realizada exitosamente y envío registrado." });
                 }
             }
@@ -108,6 +137,7 @@ namespace WormBook.Controllers
         }
         [HttpPost]
         public IActionResult ComprarLibro([FromBody] CompraLibro request)
+
         {
             try
             {
@@ -142,10 +172,10 @@ namespace WormBook.Controllers
                     // Reducir stock
                     existencia.Existencia -= request.Cantidad;
                     _context.SaveChanges();
-
+                   var guiaenvio =DateTime.Now.ToString("yyyyMMddHHmmssfff");
                     var nuevoEnvio = new Envio
                     {
-                        Guiaenvio = long.Parse(DateTime.Now.ToString("yyyyMMddHHmmssfff")),
+                        Guiaenvio = long.Parse(guiaenvio),
                         Numcajas = request.Cantidad,
                         Sucursalorigen = request.CodigoSucursal,
                     };
@@ -160,6 +190,32 @@ namespace WormBook.Controllers
                         Apellido = request.Apellido,
                     };
                     _context.Cliente.Add(nuevoCliente);
+                    _context.SaveChanges();
+                    var nuevoPe = new Productosenviado
+                    {
+                        CodigoInterno = request.LibroId,
+                        Guiaenvio = int.Parse(guiaenvio),
+                        Cantidadenviada = request.Cantidad,
+                    };
+                    _context.Productosenviados.Add(nuevoPe);
+                    _context.SaveChanges();
+                    var nuevoPv = new Productovendido
+                    {
+                        CodigoInterno = request.LibroId,
+                        Numventa = int.Parse(guiaenvio),
+                        Cantidadvendida = request.Cantidad,
+                    };
+                    _context.Productovendidos.Add(nuevoPv);
+                    _context.SaveChanges();
+                    var Nuevaventa = new Ventum
+                    {
+                        Numventa = request.LibroId,
+                        Total=request.Precio,
+                        Fechacompra=DateTime.Now,
+                        Codigosucursal=request.CodigoSucursal
+
+                    };
+                    _context.Venta.Add(Nuevaventa);
                     _context.SaveChanges();
 
                     return Json(new { success = true, message = "Compra realizada exitosamente y envío registrado." });
@@ -246,6 +302,7 @@ namespace WormBook.Controllers
         public int Telefono { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
+        public int Precio { get; set; } // Agregado para el precio del libro
     }
     public class CompraLibro
     {
@@ -256,6 +313,7 @@ namespace WormBook.Controllers
         public int Telefono { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
+        public int Precio { get; set; }
     }
 
 }

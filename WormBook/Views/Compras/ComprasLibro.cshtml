@@ -257,6 +257,9 @@
                 const titulo = card.find('.card-title').text();
                 const autor = card.find('p.text-muted').text();
                 const codigo = card.find('p:contains("Código")').text();
+                const precioTexto = card.find('p:contains("Precio: $")').text();
+                const precio = parseFloat(precioTexto.replace(/[^0-9.]/g, '')); 
+
                 const existencia = card.find('p:contains("Existencia total")').text();
                 const imgSrc = card.find('img').attr('src');
 
@@ -270,6 +273,7 @@
                             <p><strong>Autor:</strong> ${autor}</p>
                             <p>${codigo}</p>
                             <p>${existencia}</p>
+                            <p>${precio}</p>
                             <p><strong>Sucursal:</strong> ${sucursalTexto}</p>
                         </div>
                     </div>
@@ -282,6 +286,7 @@
 
                 $('#modalCompra').data('libro-id', libroId);
                 $('#modalCompra').data('sucursal-codigo', sucursalCodigo);
+                $('#modalCompra').data('precio', precio);
 
                 const modal = new bootstrap.Modal(document.getElementById('modalCompra'));
                 modal.show();
@@ -302,12 +307,12 @@
             const sucursalCodigo = $('#modalCompra').data('sucursal-codigo');
             const cantidad = parseInt($('#cantidadCompra').val()) || 1;
             const metodoPago = $('#metodoPago').val();
-
+            const precio = $('#modalCompra').data('precio');
             const nombre = $('#nombre').val();
             const apellido = $('#apellido').val();
             const telefono = $('#telefono').val();
             const destino = $('#destino').val();
-
+            console.log(precio)
             // Validación de campos obligatorios
             if (!nombre || !apellido || !telefono || !destino) {
                 mostrarAlerta('Por favor, completa todos los campos requeridos.', 'danger', 3000);
@@ -322,7 +327,8 @@
                 Nombre: nombre,
                 Apellido: apellido,
                 Telefono: telefono,
-                Destino: destino
+                Destino: destino,
+                Precio:precio,
             };
 
             $.ajax({
