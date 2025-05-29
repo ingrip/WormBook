@@ -83,7 +83,9 @@
                                 }
                                 @existenciaTotal
                             </p>
-
+                            <p>
+                                <strong>Precio: $ </strong> @libro.CodigoInternoNavigation?.Precio
+                            </p>
                             <label for="sucursal_@libro.CodigoInterno" class="form-label">Seleccionar sucursal</label>
                             <select id="sucursal_@libro.CodigoInterno" class="form-select mb-2 sucursal-select" data-libro-id="@libro.CodigoInterno">
                                 <option selected disabled>Selecciona una sucursal...</option>

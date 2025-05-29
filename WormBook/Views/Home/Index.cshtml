@@ -15,7 +15,8 @@
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
                 <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-                  </div>
+                <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
             <div class="carousel-inner">
 
                 <div class="carousel-item active" data-bs-interval="1000" style="cursor:pointer;"
@@ -33,6 +34,15 @@
                         <h5>Para los más peques</h5>
                         <p>Explora nuestra sección de juegos de mesa.</p>
                     </div>
+                </div>
+                <!-- ✅ Slide 3: Envíos -->
+                    <div class="carousel-item" style="cursor:pointer;" data-bs-interval="1000"
+                         onclick="window.location.href='@Url.Action("Envios", "Envios")'">
+                        <img src="img/envios.gif" class="d-block w-100" alt="Rastrear envío" />
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>¿Esperas un envío?</h5>
+                            <p>Consulta el estado y detalles de tu envío aquí.</p>
+                        </div>
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleDark" data-bs-slide="prev">
