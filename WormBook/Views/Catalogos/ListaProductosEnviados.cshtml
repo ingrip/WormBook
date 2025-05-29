@@ -54,18 +54,13 @@
                     <div class="card-body">
                         <h5 class="card-title text-dark">
                             @(
-                                item.CodigoInternoNavigation.Libro?.Titulo ??
-                                item.CodigoInternoNavigation.Juegomesa?.Nombre ??
-                                "Producto sin título"
+                                "Producto "
                                 )
                         </h5>
                         <p class="card-text"><strong>Código Interno:</strong> @item.CodigoInterno</p>
                         <p class="card-text"><strong>Cantidad Enviada:</strong> @item.Cantidadenviada</p>
                         <p class="card-text"><strong>Guía de Envío:</strong> #@item.Guiaenvio</p>
-                        <p class="card-text">
-                            <strong>Destino:</strong>
-                            @(item.GuiaenvioNavigation?.Destino ?? "Destino no especificado")
-                        </p>
+                        
 
                     </div>
                 </div>

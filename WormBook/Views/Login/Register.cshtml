@@ -1,13 +1,11 @@
 ﻿@model WormBook.Models.Login
 
-
 @{
     ViewData["Title"] = "Registro";
 }
 
 @section Scripts {
     <script>
-        // Si TempData["Message"] tiene valor, lo mostramos con alert
         var message = '@TempData["Message"]';
         if (message) {
             alert(message);
@@ -18,63 +16,101 @@
 <style>
     body {
         background: #fef6fb;
-        font-family: 'Segoe UI', sans-serif;
+        font-family: 'Comfortaa', cursive, 'Segoe UI', sans-serif;
+        height: 100vh;
+        margin: 0;
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 100vh;
     }
 
-    form {
+    .register-form {
         background: #fff0f6;
-        padding: 30px 40px;
-        border-radius: 15px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-        width: 350px;
+        padding: 40px 50px;
+        border-radius: 20px;
+        box-shadow: 0 15px 30px rgba(217, 108, 157, 0.25);
+        width: 360px;
+        transition: box-shadow 0.3s ease;
     }
 
-    h2 {
-        color: #d96c9d;
-        text-align: center;
-        margin-bottom: 20px;
+        .register-form:hover {
+            box-shadow: 0 20px 40px rgba(217, 108, 157, 0.35);
+        }
+
+        .register-form h2 {
+            color: #d96c9d;
+            text-align: center;
+            margin-bottom: 28px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+        }
+
+    label {
+        color: #b85a82;
+        font-weight: 600;
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.9rem;
     }
 
-    input[type="text"], input[type="email"], input[type="password"] {
+    input[type="email"],
+    input[type="password"] {
         width: 100%;
-        padding: 10px 15px;
-        margin: 8px 0 20px 0;
-        border: 1px solid #f2d1e6;
-        border-radius: 8px;
+        padding: 12px 18px;
+        margin-bottom: 24px;
+        border: 2px solid #f2d1e6;
+        border-radius: 12px;
         background: #fffaff;
+        font-size: 1rem;
+        color: #6a3b58;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
+
+        input[type="email"]:focus,
+        input[type="password"]:focus {
+            border-color: #d96c9d;
+            box-shadow: 0 0 8px #d96c9d;
+            outline: none;
+        }
 
     input[type="submit"] {
         background: #f7b5d4;
         color: white;
-        padding: 10px;
+        padding: 12px;
         border: none;
-        border-radius: 8px;
+        border-radius: 15px;
         cursor: pointer;
         width: 100%;
-        font-weight: bold;
-        transition: 0.3s;
+        font-weight: 700;
+        font-size: 1.1rem;
+        letter-spacing: 1px;
+        transition: background 0.3s ease;
+        box-shadow: 0 6px 12px rgba(247, 181, 212, 0.5);
     }
 
         input[type="submit"]:hover {
             background: #e68cb6;
+            box-shadow: 0 8px 16px rgba(230, 140, 182, 0.6);
         }
 
+    .text-danger {
+        font-size: 0.85rem;
+        margin-top: -18px;
+        margin-bottom: 12px;
+        display: block;
+    }
 </style>
 
-<form asp-action="RegisterRegistro" method="post">
+<form asp-action="RegisterRegistro" method="post" class="register-form">
     <h2>Registrarse</h2>
 
-    <label>Email</label>
+    <label asp-for="email">Email</label>
     <input asp-for="email" type="email" required />
+    <span asp-validation-for="email" class="text-danger"></span>
 
-    <label>Contraseña</label>
+    <label asp-for="password">Contraseña</label>
     <input asp-for="password" type="password" required />
-
+    <span asp-validation-for="password" class="text-danger"></span>
 
     <input type="submit" value="Crear Cuenta" />
 </form>
